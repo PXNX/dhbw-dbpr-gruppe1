@@ -1,6 +1,6 @@
 <?php
 include "auth/auth.inc.php";
-check_already_logged_in();
+include 'include/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -10,41 +10,85 @@ check_already_logged_in();
     <title>Lagerbestanderfassung</title>
 </head>
 <body>
+  
+  <h1 style="text-align:center"><p>Lagerbestand erfassen</p></h1>
 
-  <?php echo '<h1 style="text-align:center"><p>Lagerbestand erfassen</p></h1>';
-
-include 'include/db.inc.php';
-
-$query = $db->prepare("SELECT * from markt where marktid=? and marktkennwort=?");
-$query->execute([$_POST['market-id'], $_POST['market-pass']]);
-$test= $query->fetchAll();
-var_dump($test);
-
-echo '
-  <form method="post" action="http://vorlesungen.kirchbergnet.de/inhalte/DB-PR/output_posted_vars.php">
+  <form method="post" action="lagerbestand.php">
     
   <table>
-  <tr>
-    <td><label for="getränk"><b>Getränk:</b></label></td>
-    <td><input name="getränk" size="40" maxlength="60" value="" /><br></td>
-  </tr>
-  <tr>
-    <td><label for="hersteller"><b>Hersteller:</b></label></td>
-    <td><input name="hersteller" size="40" maxlength="60" value="" /><br></td>
-  </tr>
- <tr>
-  //Todo: Anzahl muss mind. 0 sein
+    <label for="getraenkename"><b>Getränk:</b></label>
+  <select id="getraenkename" name="getraenkename"> 
+  <?php
+  
+  $getraenke = $db->query("SELECT * from getraenk");
+  var_dump($getraenke);
+  foreach($getraenke as $row) {
+    $getraenkename = $row["getraenkename"];
+    echo "<option value='$getraenkename'>$getraenkename</option>";
+  }
+  ?>
+ 
+  </select>
+  <br> 
+  <table>
+    <label for="hersteller"><b>Hersteller:</b></label>
+  <select id="hersteller" name="hersteller"> 
+  <?php
+  
+  $hersteller = $db->query("SELECT * from Getraenk");
+  var_dump($hersteller);
+  foreach($hersteller as $row) {
+    $hersteller = $row["hersteller"];
+    echo "<option value='$hersteller'>$hersteller</option>";
+  }
+  ?>
+ 
+  </select>
+  <br> 
 
-    <td><label for="anzahl"><b>Anzahl:</b></label></td>
-    <td><input name="anzahl" size="5" maxlength="5" value="" /><br></td>
+ <tr>
+    <label for="lagerbestand"><b>Anzahl:</b></label>
+    <input id="lagerbestand" name="lagerbestand" type="number" min="0">
   </tr>
  </table><br>
-    <center><input type="submit" value="erfassen"/></center>
+    <input type="submit" value="erfassen"/>
   </form>
 
-'
+<?php
+
+if(isset($_POST['getraenkename']) && isset($_POST['lagerbestand']) && isset($_POST['hersteller'])){
+  $getraenkename = $_POST['getraenkename'];
+  $hersteller = $_POST['hersteller'];
+  $lagerbestand = $_POST['lagerbestand'];
+  
+  saveLagerbestand($getraenkename,$hersteller,$lagerbestand);
+
+}
+
+function saveLagerbestand(string $getraenkename,string $hersteller,int $lagerbestand){
+  include "include/db.inc.php";
+  $query = $db->prepare("insert into fuehrt(getraenkename,hersteller,lagerbestand,marktid) values(:getraenkename, :hersteller, :lagerbestand, :marktid) on duplicate key update lagerbestand = :lagerbestand");
+  $result = $query->execute([
+    ':getraenkename'=>$getraenkename,
+    ':hersteller'=>$hersteller,
+    ':lagerbestand'=>$lagerbestand,
+    ':marktid'=>$_SESSION['market-id']]);
+if($result) {
+  echo'Lagerbestand wurde erfolgreich gespeichert!';
+} 
+}
+
+ // Unnötig?
+ function getraenk_exists($getraenkename,$hersteller):bool{
+  include "include/db.inc.php";
+  $query = $db->prepare("Select * from fuehrt where getraenkename=? and hersteller=? and marktid=?");
+  $query->execute([$getraenkename,$hersteller,$_SESSION['market-id']]);
+  $result= $query->fetchAll();
+  return count($result) !== 0;
+ }
+
 ?>
 
-  
+
 </body>
 </html>

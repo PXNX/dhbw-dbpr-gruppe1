@@ -11,28 +11,11 @@ include "include/auth.inc.php";
 <body>
 
 <h1>intern Mitarbeiter</h1>
-<form method="post" action="intern.php">
-<label for="market-id">Markt ID:</label>
-<input type="text" id="market-id" name="market-id"></br>
-<label for="market-pass">Markt Passwort:</label>
-<input  id="market-pass" name="market-pass" type="password"></br>
-<input  id="market-login"  type="submit" value="Einloggen"> 
-</form>
- 
-<?php
-
-
-
-
-
-
-
-
-
-
-
-
-
-?>
+<ul>
+   <li><a href="/getraenk.php">Getränkeerfassung</a></li> 
+   <li><a href="/auswertung.php">Auswertung</a></li> 
+    </ul>
+<br><br>
+<a href="auth/logout.php">Logout</a>
 </body>
 </html>

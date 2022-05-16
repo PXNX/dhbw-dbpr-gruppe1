@@ -1,57 +1,58 @@
 <?php
-include "auth/auth.inc.php";
-check_already_logged_in();
+include "include/auth.inc.php";
+include 'include/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
 <head>
     <meta charset="UTF-8">
     <meta author="Marcel Bitschi">
-    <title>Getränkerfassung</title>
+    <title>Getränkeerfassung</title>
 </head>
 <body>
   
-  <?php echo '<h1 style="text-align:center"><p>Getränk erfassen</p></h1>';
+  <h1 style="text-align:center"><p>Getränk erfassen</p></h1>
 
-include 'include/db.inc.php';
-
-$query = $db->prepare("SELECT * from markt where marktid=? and marktkennwort=?");
-$query->execute([$_POST['market-id'], $_POST['market-pass']]);
-$test= $query->fetchAll();
-var_dump($test);
-
-echo '
-  <form method="post" action="http://vorlesungen.kirchbergnet.de/inhalte/DB-PR/output_posted_vars.php">
+  <form method="post" action="getraenk.php">
     <table>
   <tr>
     <td><label for="getränk"><b>Getränk:</b></label></td>
-    <td><input name="getränk" size="40" maxlength="60" value="" /><br></td>
+    <td><input id="getraenk" name="getränk" size="40" maxlength="60" value="" required/><br></td>
   </tr>
   <tr>
     <td><label for="preis"><b>Preis:</b></label> </td>
-    <td><input name="preis" size="40" maxlength="5" value=""/><br></td>
+    <td><input id="preis" name="preis" type="number" min="0" step=".01" size="40" maxlength="5" value="" required/><br></td>
   </tr>
  <tr>
     <td><label for="hersteller"><b>Hersteller:</b></label> </td>
-    <td><input name="hersteller" size="40" maxlength="40" value=""/><br></td>
-  </tr>
-<form>
-  Kategorie:
-  <select name="kategorie">
+    <td><input id="hersteller" name="hersteller" size="40" maxlength="40" value=""/><br></td>
+  </tr> 
+  </table><br> 
+<form> 
+<b>Kategorie:</b>
+<select name="kategorie">
+     <option value="wasser">Wasser</option>
+     <option value="saft">Saft</option>
+     <option value="limonade">Limonade</option>
+     <option value="wein">Wein</option>
+     <option value="bier">Bier</option>
+     <option value="sonstiges">Sonstiges</option>
+  </select> <br>  
+  <input type="submit" value="erfassen"/>
+  </form> 
+<?php
 
-// Todo: per datenbankzugriff auf kategorie zugreifen
+if(isset($_POST['getränk']) && ($_POST['preis']) && ($_POST['hersteller']) && ($_POST['kategorie'])) {
+$input_getraenk = $_POST['getränk'];
+$input_preis = $_POST['preis'];
+$input_hersteller = $_POST['hersteller'];
+$input_kategorie = $_POST['kategorie'];
 
-  <option value="wasser">Wasser</option>
-    <option value="saft">Saft</option>
-    <option value="limonade">Limonade</option>
-    <option value="wein">Wein</option>
-    <option value="bier">Bier</option>
-    <option value="sonstiges">Sonstiges</option>
-  </table><br>
-    <center><input type="submit" value="erfassen"/></center>
-  </form>
 
-'
+  $query = $db->prepare("INSERT into getraenk (getraenkename,hersteller,preis,kategorie) values(?,?,?,?);");
+  $query->execute([$input_getraenk,$input_hersteller,$input_preis,$input_kategorie]);
+  $test= $query->fetchAll();
+}
 ?>
 
 </body>
