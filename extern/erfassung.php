@@ -3,7 +3,7 @@
     include_once 'includes/dbh.inc.php';
     
 
-    //Autor Silas Blender
+    
 
   $sql = "SELECT  marketname FROM market;";
   $marketnames = mysqli_query ($conn, $sql);
@@ -49,7 +49,7 @@
             <form method="POST" action="CreateOrder.php" name="marketname">
             <label for ="market"><h2> Select Market: </h2></label>
             <select id="market" name="market">
-            <option value="">--- Markt auswählen ---</option>
+            <option value="">--- Select ---</option>
             <?php
 
             while ($cat = mysqli_fetch_array(
@@ -190,3 +190,4 @@
      <br><hr><br> 
     </body>
 </html>
+
