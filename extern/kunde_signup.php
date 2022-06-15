@@ -1,5 +1,5 @@
 <?php
-session_start();
+include "../auth/auth.inc.php";
 ?>
 <html>
     <head>
@@ -9,7 +9,7 @@ session_start();
     </head>
     <body>
 
-    <h1 style="text-align:center"><p>Schritt 3: Registrieren</p></h1>
+    <h1 style="text-align:center"><p>Registrieren</p></h1>
 
 <form method="post" action="kunde_signup.php">
 
@@ -48,23 +48,30 @@ if(mail_exists($input_mail)){
     return;
 }
 
-$query = $db->prepare("INSERT into kunde (kundenaddresse,kundenkennwort,kundenname, mailaddresse) values(?,?,?,?)");
+$query = $db->prepare("INSERT into kunde (kundenadresse,kundenkennwort,kundenname, mailadresse) values(?,?,?,?)");
 $query->execute([ $input_adresse,$input_pass,$input_name,$input_mail]);
 $test= $query->fetchAll();
 var_dump($test);
 
 $_SESSION["e-mail"] = $input_mail;
 
-
-
-header('Location:../extern.php', true, 301);
+header('Location: kunde_login.php', true, 301);
 exit();
 
 }
 
+function mail_exists($input_mail): bool
+{
+ include "../include/db.inc.php";
+ $query = $db->prepare("SELECT * from kunde k where k.mailadresse=?");
+    $query->execute([$input_mail]);
+    $result = $query->fetchAll();
+    return count($result) !== 0;
+}
+
+
 //Evtl. if empty abfrage
 
-//function mailaddresse_exists
 
 ?>
 

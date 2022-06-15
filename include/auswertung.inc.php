@@ -146,4 +146,11 @@
         return $this->median;
     }
 
+    public function linearRegression($kalenderWochen, $umsatzSummen){
+        //y=b*x+a
+      
+
+    }
+
+
 }

@@ -1,75 +1,103 @@
+<?php
+include "../auth/auth.inc.php";
+?>
+<!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="UTF-8"> 
-    <meta author="Patricia Schäle">
+<head>
+    <meta charset="UTF-8">
+    <meta name="author" content="Patricia Schäle">
     <title>Bestellung prüfen</title>
-  </head>
-  <body>
+    <!--
+   Allgemeine Erläuterung:
+   Prüfung, ob die Lagerbestände des gewählten Markts ausreichen. Ist dies nicht der Fall,
+   bekommt der Kunde eine Meldung und die Bestellung kann dann angepasst werden.
+    -->
+</head>
+<body>
 
 <h1 style="text-align:center">Bestellung prüfen</h1>
 
 <?php
 
-include '../include/db.inc.php';
-//if (isset($_POST['marktid']) && isset($_POST['position'])){
-$markt = 69;//$_POST['marktid'];
-$pos = 2;//$_POST['position'];
+/**
+ * @author Felix Huber
+ */
+function sum_amounts($pos, $getraenk): array
+{
+
+    $sumgetraenk = array();
+
+    for ($i = 1; $i <= $pos; $i++) {
+
+        if (isset($_POST['getraenk' . $i]) && isset($_POST['anz' . $i]) && $_POST['anz' . $i] > 0) {
+            $a_getraenk = $getraenk[$_POST['getraenk' . $i]];
+            $hersteller = $a_getraenk['hersteller'];
+            $name = $a_getraenk['getraenkename'];
+
+            //Wir setzen zu einem Hersteller zu einem bestimmten Getränkenamen erhöhen wir die Anzahl i oder wenn noch nichts da ist haben wir 0+Anzahl
+            $sumgetraenk[$hersteller][$name] = ($sumgetraenk[$hersteller][$name] ?? 0) + $_POST['anz' . $i];
+            var_dump($sumgetraenk[$hersteller][$name]);
+        }
+
+
+    }
+    return $sumgetraenk;
+}
+
+/**
+ * @author Felix Huber
+ */
+function check_amounts($getraenk, array $sumgetraenk): bool
+{
+    $is_correct = true;
+
+    foreach ($getraenk as $a_getraenk) {
+        $hersteller = $a_getraenk['hersteller'];
+        $name = $a_getraenk['getraenkename'];
+        $lagerbestand = $a_getraenk['lagerbestand'];
+
+        if (isset($sumgetraenk[$hersteller]) && isset($sumgetraenk[$hersteller][$name])) {
+
+            $anzahl = $sumgetraenk[$hersteller][$name]; //?? 0
+            if ($lagerbestand < $anzahl) {
+                $is_correct = false;
+                echo '<p>Das Getränk ' . $name . ' vom Hersteller ' . $hersteller . ' 
+        ist nur begrenzt auf Lager. Der Lagerbestand beträgt ' . $lagerbestand . '. 
+        Ihre Bestellmenge von ' . $anzahl . ' ist zu hoch.</p>';
+            }
+        }
+    }
+    return $is_correct;
+}
+
+if (isset($_SESSION['marktid']) && isset($_SESSION['position'])) {
+    include '../include/db.inc.php';
+    $markt = $_SESSION['marktid'];
+    $pos = $_SESSION['position'];
 
 //Statt * -> Auch g.getraenkename, g.hersteller und f.lagerbestand
-$query = $db->prepare("SELECT * FROM getraenk g, fuehrt f WHERE g.getraenkename=f.getraenkename and g.hersteller=f.hersteller and f.marktid=? and f.lagerbestand>0");
-$query->execute([$markt]);
-$getraenk = $query->fetchAll();
+    $query = $db->prepare("SELECT g.hersteller, g.getraenkename, f.lagerbestand FROM getraenk g, fuehrt f WHERE g.getraenkename=f.getraenkename and g.hersteller=f.hersteller and f.marktid=? and f.lagerbestand>0");
+    $query->execute([$markt]);
+    $getraenk = $query->fetchAll();
 
-$sumgetraenk = array();
 
-for ($i = 1;$i <= $pos;$i++) {
-    var_dump($_POST['getraenk'.$i]);
-    var_dump($_POST['anz'.$i]);
-if(isset($_POST['getraenk'.$i]) && isset($_POST['anz'.$i]) && $_POST['anz'.$i]>0){
-    $a_getraenk=$getraenk[$_POST['getraenk'.$i]];
-    $sumgetraenk[$a_getraenk[0]][$a_getraenk[1]]+= $_POST['anz'.$i];
-    var_dump($sumgetraenk[$a_getraenk[0]][$a_getraenk[1]]);
-  
+//Wir summieren die Anzahl auf, falls jemand zweimal dasselbe Getränk gewählt hat an mehreren Bestellpositionen
+    $sumgetraenk = sum_amounts($pos, $getraenk);
 
-var_dump($sumgetraenk[$_POST['getraenk'.$i]]);
-$sumgetraenk[$_POST['getraenk'.$i]] += $_POST['anz'.$i];
+//Passen die Anzahlen zum Lagerbestand?
+
+    if ( check_amounts($getraenk, $sumgetraenk)) {
+        $_SESSION["order"] = $sumgetraenk;
+        include "../include/util.inc.php";
+        redirect("kunde_login.php");
+    } else {
+        echo '<a href="bestellung_erfassen.php">Bestellung überarbeiten</a>';
+    }
+
 }
-var_dump($sumgetraenk);
-
 
 ?>
-<form action="bestellung_pruefen.php" method="post">
-    <table>
-        <tr>
-            <td>Positionsnummer</td>
-            <td>Getränk</td>
-            <td>Anzahl</td>
-        </tr>
-        <tr>
-            <?php
-            echo '<td>'.$i.'</td>';
-            ?>
-            <td><select id="getraenk" name="getraenk".$i>
-                    <?php
 
-                    foreach($getraenk as $key=> $row) {
-                        $hersteller = $row["hersteller"];
-                        $getraenkename = $row["getraenkename"];
-                        echo'<option value="'.$key.'">'.$hersteller.' - '.$getraenkename.'</option>';
-                      }
-
-
-                    ?>
-                </select></td>
-            
-            <td><input name="anz".$i size="10" maxlength="5" value=""/></td>
-        </tr>
-    </table>
-    <button type="submit" name="pruefen">Lagerbestand prüfen</button></br>
-    <?php
-    }
-    //}
-    ?>
 </form>
 </body>
 

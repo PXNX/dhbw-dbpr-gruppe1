@@ -1,6 +1,7 @@
-<?php 
-include "auth.inc.php";
+<?php
+include "../auth/auth.inc.php";
 ?>
+<!DOCTYPE html>
 <html>
     <head>
     <meta charset="UTF-8"> 
@@ -8,8 +9,10 @@ include "auth.inc.php";
     <title>Anmeldung Kunde</title>
     </head>
     <body>
-    <h1 style="text-align:center"><p>Schritt 3: Anmeldung</p></h1>
-<form method="post" action="kunde_login.php">
+    <h1 style="text-align:center"><p>Anmeldung: Ihre Bestellung ist möglich!!!</p></h1>
+    <h3 style="text-align:center"><p>Um die Bestellung durchführen zu können, müssen Sie sich <b>einloggen</b>.
+      Wenn Sie noch kein Kundenkonto haben, <b>registrieren</b> Sie sich bitte zuerst.</p></h3>
+<form method="post" action="bestellung_abschluss.php">
 
 <label for="e-mail">E-Mail Adresse:</label>
 <input type="text" id="e-mail" name="e-mail" required>
@@ -26,28 +29,31 @@ include "auth.inc.php";
 
 <?php
 if(isset($_POST['e-mail']) && isset( $_POST['kunde-pass']) ){
- kundelogin($_POST['e-mail'],  $_POST['kunden-pass']);
+ kundelogin($_POST['e-mail'],  $_POST['kunde-pass']);
 }
 
 function kundelogin(String $input_mail, String $input_pass){
     include_once "../include/db.inc.php";
-    $query = $db->prepare("SELECT kundenkennwort from kunde where mailaddresse=?");
+    $query = $db->prepare("SELECT kundenkennwort from kunde where mailadresse=?");
     $query->execute([$input_mail]);
     $correct_pass= $query->fetchAll(PDO::FETCH_COLUMN)[0];
    
     if(  password_verify($input_pass, $correct_pass)){
       $_SESSION["e-mail"] = $input_mail;
    
-    header('Location: ../extern.php', true, 301);
+    header('Location: bestellung_abschluss.php', true, 301);
     exit();
   
     }else{
       echo("<h1>Passwort ist inkorrekt.</h1>");
+
+      
+
+
+
     }
   
   }
-
-
 ?>
 </body>
 </html>
