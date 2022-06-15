@@ -6,7 +6,7 @@ include 'include/db.inc.php';
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta author="Marcel Bitschi">
+    <meta name="author" content="Marcel Bitschi">
     <title>Lagerbestanderfassung</title>
 </head>
 <body>
@@ -88,6 +88,8 @@ if($result) {
  }
 
 ?>
+
+
 
 
 </body>

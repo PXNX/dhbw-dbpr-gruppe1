@@ -12,9 +12,10 @@ include "include/auth.inc.php";
 
 <h1>intern Mitarbeiter</h1>
 <ul>
-   <li><a href="/getraenk.php">Getränkeerfassung</a></li> 
-   <li><a href="/auswertung.php">Auswertung</a></li> 
-    </ul>
+    <li><a href="/getraenk.php">Getränkeerfassung</a></li>
+    <li><a href="/lagerbestand.php">Lagerbestand</a></li>
+    <li><a href="/auswertung.php">Auswertung</a></li>
+</ul>
 <br><br>
 <a href="auth/logout.php">Logout</a>
 </body>

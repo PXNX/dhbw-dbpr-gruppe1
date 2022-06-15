@@ -5,13 +5,12 @@
     <title>Erfassungsformular</title>
   </head>
   <body>
-
-<h1 style="text-align:center"><p>Erfassungsformular erstellen</p></h1>
-<form action="bestellung_erfassen.php" method="post">
+<h1 style="text-align:center"><p>Schritt 1: Erfassungsformular erstellen</p></h1>
+<form action="erfassung.php" method="post">
     <table>
   <tr>
-    <td><label for="marktid"><b>Markt ID:</b></label></td>
-    <td><input name="marktid" size="40" maxlength="60" value="" required/><br></td>
+    <td><label for="mark"><b>Markt ID:</b></label></td>
+    <td><input name="markt" size="40" maxlength="60" value="" required/><br></td>
   </tr>
   <tr>
     <td><label for="anzahl"><b>Anzahl Bestellpositionen:</b></label> </td>
@@ -20,7 +19,6 @@
   </table><br>
     <button type="submit" name="erfassen">Erfassungsformular erstellen</button></br>
   </form>
-
 
  </body>
 </html>

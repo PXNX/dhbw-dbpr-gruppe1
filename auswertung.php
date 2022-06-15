@@ -28,7 +28,6 @@ include "auth/auth.inc.php";
 <?php
 $curr_date =  date("Y-m-d");
 echo ("<input type='date' id='start' name='start-date' max='$curr_date' required>");
-
 ?>
 <br><br>
 
@@ -44,21 +43,20 @@ if(isset($_POST["start-date"]) && isset($_POST["kategorie"])){
   $kategorie = $_POST["kategorie"];
 
   include "include/auswertung.inc.php";
-  $auswertung = new Auswertung();
+  $auswertung = new Auswertung($_SESSION["market-id"],$start_date, $kategorie);
 //  $auswertung->calculateKennzahlen($start_date, $kategorie);
 
   $bestellung = $auswertung->getBestellung();
   $gesamtumsatz = $auswertung->getGesamtumsatz();
-  $standardabweichung = $auswertung->getStandardabweichung();
+  $standardabweichung = implode($auswertung->getStandardabweichung());
   $median = $auswertung->getMedian();
 
   echo ("Gesamtumsatz der Woche: $bestellung EUR<br>
   Umsatz der größten Bestellung der Woche: $gesamtumsatz EUR<br>
-  Standardabweichung der Umsätze aller Bestellungen der Woche:  $standardabweichung EUR<br>
+  Standardabweichung der Umsätze aller Bestellungen der Woche: $standardabweichung EUR<br>
   Median der Umsätze aller Bestellungen der Woche: $median EUR");
-
+     	
 }
-
 
 ?>
 

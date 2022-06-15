@@ -6,7 +6,7 @@ include 'include/db.inc.php';
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta author="Marcel Bitschi">
+    <meta name="author" content="Marcel Bitschi">
     <title>Getränkeerfassung</title>
 </head>
 <body>
