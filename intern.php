@@ -5,7 +5,7 @@ include "include/auth.inc.php";
 <html>
 <head>
     <meta charset="UTF-8">
-  <meta author="Felix Huber">
+    <meta name="author" content="Felix Huber">
     <title>Anmeldung Mitarbeiter</title>
 </head>
 <body>

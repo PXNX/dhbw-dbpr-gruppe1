@@ -10,8 +10,8 @@ include 'include/db.inc.php';
     <title>Getränkeerfassung</title>
 </head>
 <body>
-  
-  <h1 style="text-align:center"><p>Getränk erfassen</p></h1>
+
+<h1 style="text-align:center">Getränk erfassen</h1>
 
   <form method="post" action="getraenk.php">
     <table>

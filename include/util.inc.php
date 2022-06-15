@@ -1,5 +1,7 @@
 <?php
-
+/**
+ * @author Felix Huber
+ */
 
  function redirect($url): void{
      ob_start();
