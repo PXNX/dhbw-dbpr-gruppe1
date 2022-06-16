@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'common/db.inc.php';
+include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -10,7 +10,7 @@ include 'common/db.inc.php';
     <title>Anmeldung Mitarbeiter</title>
 </head>
 <body>
-<h1>Anmeldung Mitarbeiter</h1>
+<h1 style="text-align:center">Anmeldung Mitarbeiter</h1>
 
 <form method="post" action="login.php">
 
@@ -40,6 +40,7 @@ if (isset($_POST['marktid']) && isset($_POST['marktkennwort'])) {
 
 function login(string $marktid, string $marktkennwort)
 {
+    include '../common/db.inc.php';
     $query = $db->prepare("SELECT marktkennwort from markt where marktid=:marktid");
     $query->execute([
         ':marktid' => $marktid]);
@@ -52,7 +53,7 @@ function login(string $marktid, string $marktkennwort)
         Hier könnte man auch direkt auf die zuvor angeforderte Url weiterleiten, dies ist aber keine AF.
         Deshalb nur auf die Startseite für interne Mitarbeiter.
         */
-        header('Location: ../index.php', true, 301);
+        header('Location: index.php', true, 301);
         exit();
 
     } else {

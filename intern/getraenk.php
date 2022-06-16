@@ -1,6 +1,6 @@
 <?php
-include "common/auth.inc.php";
-include 'common/db.inc.php';
+include "../common/auth.inc.php";
+include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>

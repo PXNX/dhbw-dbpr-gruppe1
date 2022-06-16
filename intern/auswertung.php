@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'common/db.inc.php';
+include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -10,7 +10,7 @@ include 'common/db.inc.php';
     <title>Auswertungen der Bestellungen</title>
 </head>
 <body>
-<h1 style="text-align:center"><p>Auswertungen der Bestellungen</p></h1>
+<h1 style="text-align:center">Auswertungen der Bestellungen</h1>
 
 <form method="post" action="auswertung.php">
 
@@ -44,7 +44,7 @@ if (isset($_POST["start-date"]) && isset($_POST["kategorie"])) {
     $start_date = $_POST["start-date"];
     $kategorie = empty($_POST["kategorie"]) ? null : $_POST["kategorie"];
 
-    include "common/auswertung.inc.php";
+    include "../common/auswertung.inc.php";
     $auswertung = new Auswertung($_SESSION["marktid"], $start_date, $kategorie);
 //  $auswertung->calculateKennzahlen($start_date, $kategorie);
 

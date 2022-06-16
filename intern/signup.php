@@ -1,6 +1,6 @@
 <?php
 session_start();
-include 'common/db.inc.php';
+include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,7 +11,7 @@ include 'common/db.inc.php';
 </head>
 <body>
 
-<h1>Neuen Markt anlegen</h1>
+<h1 style="text-align:center">Neuen Markt anlegen</h1>
 <form method="post" action="signup.php">
 
     <label for="marktid">Markt ID:</label>
@@ -51,7 +51,7 @@ if (isset($_POST['marktid']) && isset($_POST['marktname']) && isset($_POST['mark
 
     $_SESSION["marktid"] = $marktid;
 
-    header('Location: ../index.php', true, 301);
+    header('Location: index.php', true, 301);
     exit();
 
 } else {
@@ -72,7 +72,7 @@ if (isset($_POST['marktid']) && isset($_POST['marktname']) && isset($_POST['mark
  */
 function marktname_exists($marktname): bool
 {
-    include "../common/db.inc.php";
+    include '../common/db.inc.php';
     $query = $db->prepare("Select * from markt m where m.marktname=:marktname");
     $query->execute([
         ':marktname' => $marktname]);

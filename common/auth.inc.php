@@ -4,8 +4,8 @@
  */
 session_start();
 
-if (!isset($_SESSION['market-id'])) {
-    header("Location: ../auth/login.php", true, 301);
+if (!isset($_SESSION['marktid'])) {
+    header("Location: ../intern/login.php", true, 301);
     exit();
 }
 ?>

@@ -1,6 +1,6 @@
 <?php
-include "common/auth.inc.php";
-include 'common/db.inc.php';
+include "../common/auth.inc.php";
+include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -48,37 +48,24 @@ if (isset($_POST['getraenk']) && isset($_POST['lagerbestand'])) {
     $hersteller = $getraenk[0];
     $getraenkename = $getraenk[1];
     $lagerbestand = $_POST['lagerbestand'];
-    var_dump($getraenk, $hersteller, $getraenkename, $lagerbestand);
-    saveLagerbestand($getraenkename, $hersteller, $lagerbestand);
 
+    saveLagerbestand($getraenkename, $hersteller, $lagerbestand);
 }
 
 function saveLagerbestand(string $getraenkename, string $hersteller, int $lagerbestand)
 {
-    include "common/db.inc.php";
+    include "../common/db.inc.php";
     $query = $db->prepare("insert into fuehrt(getraenkename,hersteller,lagerbestand,marktid) values(:getraenkename, :hersteller, :lagerbestand, :marktid) on duplicate key update lagerbestand = :lagerbestand");
     $result = $query->execute([
         ':getraenkename' => $getraenkename,
         ':hersteller' => $hersteller,
         ':lagerbestand' => $lagerbestand,
-        ':marktid' => $_SESSION['market-id']]);
+        ':marktid' => $_SESSION['marktid']]);
     if ($result) {
         echo 'Lagerbestand wurde erfolgreich gespeichert!';
     }
 }
 
-// Unnötig?
-function getraenk_exists($getraenkename, $hersteller): bool
-{
-    include "common/db.inc.php";
-    $query = $db->prepare("Select * from fuehrt where getraenkename=? and hersteller=? and marktid=?");
-    $query->execute([$getraenkename, $hersteller, $_SESSION['market-id']]);
-    $result = $query->fetchAll();
-    return count($result) !== 0;
-}
-
 ?>
-
-
 </body>
 </html>
