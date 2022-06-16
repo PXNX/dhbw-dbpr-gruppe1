@@ -50,13 +50,13 @@ if (isset($_POST["start-date"]) && isset($_POST["kategorie"])) {
 
     $bestellung = $auswertung->getBestellung();
     $gesamtumsatz = $auswertung->getGesamtumsatz();
-    $standardabweichung = implode($auswertung->getStandardabweichung());
+    $standardabweichung = $auswertung->getStandardabweichung();
     $median = $auswertung->getMedian();
 
     echo("Gesamtumsatz der Woche: $bestellung EUR<br>
   Umsatz der größten Bestellung der Woche: $gesamtumsatz EUR<b<br>
   Voraussichtlicher Umsatz diese Woche: ...<br>
-  Voraussichtlicher Umsatz nächste Woche: ...r>
+  Voraussichtlicher Umsatz nächste Woche: ...<br>
   Standardabweichung der Umsätze aller Bestellungen der Woche: $standardabweichung EUR<br>
   Median der Umsätze aller Bestellungen der Woche: $median EUR");
 

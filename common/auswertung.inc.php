@@ -1,4 +1,7 @@
-<?php class Auswertung
+<?php
+include "db.inc.php";
+
+class Auswertung
 {
     private $gesamtumsatz;
     private $bestellung;
@@ -9,7 +12,7 @@
     private $betrachtungszeitraumRegression;
     private $wochenUmsaetze;
     private $standardabweichungen;
-    private $umsatzFolgewoche;
+    // private $umsatzFolgewoche;
 
     /** @author Felix Huber */
     public function __construct($marktid, $startdatum, $kategorie)
@@ -18,6 +21,8 @@
         $this->bestellung = 0.0;
         $this->standardabweichungen = 0.0;
         $this->median = 0.0;
+
+        $this->gesamtumsatz_berchnen($marktid, $startdatum, $kategorie);
 
         $this->marktid = $marktid;
         $this->startdatum = $startdatum;
@@ -141,40 +146,76 @@
     }
 
 
-    // Hypothesenfunktion y=m*x+a
-    // a = intercept = Achsenabschnitt
-    // m = gradient = Steigung
-    function hypothesis($intercept, $gradient)
+  
+    //Regressionsfunktion
+    //Eingabe soll für aktuelle und folgende Woche Umsatz vorhersagen
+    function regression($x)
     {
-        //Daten x Werte
-        foreach($kalenderWochen as $woche){
-            $x[] = $woche[''];
+        $aktuellesDatum=$x;
+        $kw = date("W", $aktuellesDatum);
+        $kw2 = $kw -> addWeek(1);
+
+        //Daten x Werte (Zeitwerte)
+        foreach($kalenderWochen as $key => $woche){
+            $xWerte[] = $woche[$key];
         }
 
         //Daten y Werte  
         foreach($wochenUmsaetze as $u){
-            $y[] = $u[''];
+            $yWerte[] = $u;
         }
 
-        //Mittelwert x Werte
+        //Mittelwert x und y Werte
+        $xMittelwert = arithmetischesMittel($xWerte[]);
+        $yMittelwert = arithmetischesMittel($yWerte[]);
 
+        //Abweichung von x und y vom Mittelwert 
+        $xAbweichung[] = $xWerte[] - $xMittelwert;
+        $yAbweichung[] = $yWerte[] - $yMittelwert;
 
+        //Quadrierte Abweichung von x
+        $xQuadriert[] = pow($xAbweichung, 2);
 
-        //Mittelwert y Werte
+        //Abweichung x * Abweichung y -> (xi - ∅x) × (yi - ∅y)
+        $xyAbweichung[] = $xAbweichung[] * $yAbweichung[];
 
-        return function ($x) use ($intercept, $gradient) {
-            return $intercept + ($x * $gradient);
-        };
+        //Steigung berechnen -> Nun wird die Summe der multiplizierten Abweichungen 
+        //durch die Summe der quadrierten Abweichungen von x geteilt -> β = ∑ [(xi - ∅x) × (yi - ∅y)] / ∑(xi - ∅x)2
+
+        foreach($xQuadriert as $quad){
+            $sumQuadriert += $quad;
+        } 
+
+        foreach($xyAbweichung as $xyab){
+            $sumAbweichung += $xyab;
+        }
+
+        $steigung = $sumQuadriert / $sumAbweichung;
+
+        //Achsenabschnitt berechnen -> α = ∅y - β × ∅x
+        $achsenabschnitt = $yMittelwert - $yMittelwert*$xMittelwert;
+        
+
+        //Regressionsgerade -> yi = α + β × xi
+        $umsatz = $achsenabschnitt + ($x * $steigung);
+
+        //Regression Folgewoche
+        $umsatz2 = $achsenabschnitt + ($x * $steigung);
+
+        return echo' '$umsatz' '$umsatz2'';
+        
     }
 
-    
-     // Return the sum of squared errors
-     function score($data, $hypothesis) {
-        $score = 0;
-        foreach($data as $row) {
-                $score += pow($hypothesis($row[0]) - $row[1], 2);
-        }
-        return $score;
+
+    /** @author Patricia Schäle */
+    function arithmetischesMittel($werte){
+        if (count($werte)) {
+            $count = count($werte);
+            foreach ($werte as $w) {
+                $summe += $w;
+            }
+        return $arithmetischesMittel = $summe / $count;
+    }
     }
 
 
@@ -203,6 +244,17 @@
         } while ($startzeitpunkt < time());
 
         return $kalenderWochen;
+    }
+
+    private function gesamtumsatz_berchnen($marktid, $startdatum, $kategorie)
+    {
+        include "db.inc.php";
+        $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum); "); // :marktid
+        $result = $query->execute([<
+            ':kategorie' => $kategorie,
+            ':startdatum' => $startdatum,
+
+            ]);  //':marktid' => $_SESSION['marktid']
     }
 
 
