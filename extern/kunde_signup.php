@@ -13,70 +13,97 @@ include "../auth/auth.inc.php";
 
 <form method="post" action="kunde_signup.php">
 
-    <label for="e-mail">E-Mail Adresse:</label>
-    <input type="text" id="e-mail" name="e-mail" required>
-    <br><br>
 
-    <label for="kunde-pass">Passwort:</label>
-    <input id="kunde-pass" name="kunde-pass" type="password" required>
-    <br><br>
+    <label for="mailadresse">E-Mail Adresse:</label>
+    <input type="text" id="mailadresse" name="mailadresse" required>
+    </br>
 
-    <label for="kunde-name">Name:</label>
-    <input id="kunde-name" name="kunde-name" required>
-    <br><br>
+    <br>
+    <label for="kundenkennwort">Passwort:</label>
+    <input  id="kundenkennwort" name="kundenkennwort" type="password" required>
+    </br>
 
-    <label for="kunde-adresse">Adresse:</label>
-    <input id="kunde-adresse" name="kunde-adresse" required>
-    <br><br>
+    <br>
+    <label for="kundenname">Name:</label>
+    <input  id="kundenname" name="kundenname" required>
+    </br>
 
-    <input id="kunde-signup" type="submit" value="Registrieren">
-</form>
-</br></br><a href="kunde_login.php">Anmelden</a>
+    <br>
+    <label for="strassenname">Straßenname:</label>
+    <input  id="strassenname" name="strassenname" required>
+    </br>
+
+    <br>
+    <label for="hausnummer">Hausnummer:</label>
+    <input  type="number" min="0" id="hausnummer" name="hausnummer" size="6" required>
+    </br>
+
+    <br>
+    <label for="plz">PLZ:</label>
+    <input  type="number" min="0" id="plz" name="plz" size="6" required>
+    </br>
+
+    <br>
+    <label for="ort">Ort:</label>
+    <input  id="ort" name="ort" required>
+    </br>
+
+
+    <input  id="kunde-signup"  type="submit" value="Registrieren">
+</form></br></br><a href="kunde_login.php">Anmelden</a>
 
 <?php
 include "../include/db.inc.php";
 
-if (isset($_POST['e-mail']) && isset($_POST['kunde-pass']) && isset($_POST['kunde-name'])
-    && isset($_POST['kunde-adresse'])) {
+if(isset($_POST['mailadresse']) && isset( $_POST['kundenkennwort'])
+    && isset($_POST['kundenname']) && isset($_POST['strassenname'])
+    && isset($_POST['hausnummer']) && isset($_POST['plz'])
+    && isset($_POST['ort'])){
 
-    $input_mail = $_POST['e-mail'];
-    $input_pass = password_hash($_POST['kunde-pass'], PASSWORD_DEFAULT);
-    $input_name = $_POST['kunde-name'];
-    $input_adresse = $_POST['kunde-adresse'];
 
-    if (mail_exists($input_mail)) {
-        echo("<h1>Ein Kunde mit Mail-Adresse " . $input_mail . " existiert bereits. Bitte wählen Sie eine andere Mail-Adresse.");
+    $mailadresse =   $_POST['mailadresse'];
+    $kundenkennwort = password_hash( $_POST['kundenkennwort'], PASSWORD_DEFAULT);
+    $kundenname = $_POST['kundenname'];
+    $strassenname = $_POST['strassenname'];
+    $hausnummer = $_POST['hausnummer'];
+    $plz = $_POST['plz'];
+    $ort = $_POST['ort'];
+
+
+    if(mail_exists($mailadresse)){
+        echo("<h1>Ein Kunde mit Mail-Adresse ". $mailadresse . " existiert bereits. Bitte wählen Sie eine andere Mail-Adresse.");
         return;
     }
 
-    $query = $db->prepare("INSERT into kunde (kundenadresse,kundenkennwort,kundenname, mailadresse) values(:kundenadresse, :kundenkennwort, :kundenname ,:mailadresse)");
-    $query->execute([
-        ':kundenadresse' => $input_adresse,
-        ':kundenkennwort' => $input_pass,
-        'kundenname' => $input_name,
-        'mailadresse' => $input_mail]);
-    $test = $query->fetchAll();
 
-    $_SESSION["e-mail"] = $input_mail;
+    $query = $db->prepare("INSERT into kunde (hausnummer, kundenkennwort, kundenname, mailadresse, ort, plz, strassenname) values(:hausnummer, :kundenkennwort, :kundenname, :mailadresse, :ort, :plz, :strassenname)");
+    $query->execute([
+        ':hausnummer' => $hausnummer,
+        ':kundenkennwort' => $kundenkennwort,
+        'kundenname' => $kundenname,
+        'mailadresse' => $mailadresse,
+        ':ort' => $ort,
+        ':plz' => $plz,
+        ':strassenname' => $strassenname]);
+
+    $test= $query->fetchAll();
+
+    $_SESSION["mailadresse"] = $mailadresse;
 
     header('Location: kunde_login.php', true, 301);
     exit();
 
 }
 
-function mail_exists($input_mail): bool
+function mail_exists($mailadresse): bool
 {
     include "../include/db.inc.php";
     $query = $db->prepare("SELECT * from kunde k where k.mailadresse=:mailadresse");
     $query->execute([
-        ':mailadresse' => $input_mail]);
+        ':mailadresse' => $mailadresse]);
     $result = $query->fetchAll();
     return count($result) !== 0;
 }
-
-
-//Evtl. if empty abfrage
-
 
 ?>
 

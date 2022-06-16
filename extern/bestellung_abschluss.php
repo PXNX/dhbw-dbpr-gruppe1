@@ -23,7 +23,7 @@ include "../auth/auth.inc.php";
     -->
 
     <?php
-    if (isset($_SESSION['order']) && isset($_SESSION['marktid']) && isset($_SESSION['e-mail'])) {
+    if (isset($_SESSION['order']) && isset($_SESSION['extern-marktid']) && isset($_SESSION['mailadresse'])) {
 
         include_once "../include/db.inc.php";
 
@@ -32,8 +32,8 @@ include "../auth/auth.inc.php";
         $query = $db->prepare("INSERT INTO bestellung(bestelldatum, marktid, mailadresse) VALUES(:bestelldatum, :marktid, :mailadresse);");
         $result = $query->execute([
             ':bestelldatum' => date('Y-m-d'),
-            ':marktid' => $_SESSION['marktid'],
-            ':mailadresse' => $_SESSION['e-mail']
+            ':marktid' => $_SESSIextern-ON['marktid'],
+            ':mailadresse' => $_SESSmailadresse-mail']
         ]);
 
 

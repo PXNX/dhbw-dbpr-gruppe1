@@ -17,9 +17,10 @@
 <!-- Die Inhalte werden per form-Tag an die Erfassungsdatei übertragen (Hier findet dann der Erstellungsprozess des Formulars statt) -->
 <form action="extern/bestellung_erfassen.php" method="post">
 
-    <!-- Auswahlliste für den Markt. Ein Markt besteht hier aus Marktid-Marktname. -->
-    <label for="market-name"><b>Markt:</b></label>
-    <select id="market-name" name="marktid">
+    <!-- Auswahlliste für den Markt. Ein Markt besteht hier aus Marktid-Marktnam
+      extern-marktid: extern, weil es sonst mit id von Mitarbeitern korrellierte. -->
+    <label for="extern-marktid"><b>Markt:</b></label>
+    <select id="extern-marktid" name="extern-marktid">
         <?php
 
         // Warum nochmals include genau hier?
@@ -43,8 +44,8 @@
     <!-- Eingabefeld für die Anzahl der Bestellpositionen. Eingabe erlaubt nur ganze Zahlen >= 1 -->
     <table>
         <tr>
-            <td><label for="position"><b>Anzahl Bestellpositionen:</b></label></td>
-            <td><input type="number" min="1" name="position" size="40" maxlength="5"
+            <td><labpositionsnrposition"><b>Anzahl Bestellpositionen:</b></label></td>
+            <td><input type="number" min="1positionsnrposition" sngth="5"positionsnr
                        value='<?php echo $_SESSION['position']; ?>' required/><br></td>
         </tr>
     </table>

@@ -8,6 +8,9 @@ include 'include/db.inc.php';
     <meta charset="UTF-8">
     <meta name="author" content="Marcel Bitschi">
     <title>Getränkeerfassung</title>
+    <!--
+      Hier können Getränke mit ihrem Namen, einem Preis, dem Hersteller und der zugehörigen Kategorie gespeichert werden.
+-->
 </head>
 <body>
 
@@ -15,20 +18,24 @@ include 'include/db.inc.php';
 
 <form method="post" action="getraenk.php">
     <table>
-        <tr>
+      
+    <!-- Eingabefeld Getränkename-->  <tr>
             <td><label for="getränk"><b>Getränk:</b></label></td>
             <td><input id="getraenk" name="getränk" size="40" maxlength="60" value="" required/><br></td>
         </tr>
-        <tr>
+      
+     <!-- Eingabefeld Getränkepreis-->  <tr>
             <td><label for="preis"><b>Preis:</b></label></td>
             <td><input id="preis" name="preis" type="number" min="0" step=".01" size="40" maxlength="5" value=""
                        required/><br></td>
-        </tr>
+     
+   <!-- Eingabefeld Getränkehersteller-->   </tr>
         <tr>
             <td><label for="hersteller"><b>Hersteller:</b></label></td>
             <td><input id="hersteller" name="hersteller" size="40" maxlength="40" value=""/><br></td>
         </tr>
-    </table>
+    </t
+  <!-- Enum der Getränkekategorien. Hartkodiert -->able>
     <br>
     <form>
         <b>Kategorie:</b>
@@ -41,14 +48,15 @@ include 'include/db.inc.php';
             <option value="sonstiges">Sonstiges</option>
         </select> <br>
         <input type="submit" value="erfassen"/>
-    </form>
+
+// Überprüfung ob alle Werte eingetragen sind    </form>
     <?php
 
     if (isset($_POST['getränk']) && ($_POST['preis']) && ($_POST['hersteller']) && ($_POST['kategorie'])) {
         $input_getraenk = $_POST['getränk'];
         $input_preis = $_POST['preis'];
         $input_hersteller = $_POST['hersteller'];
-        $input_kategorie = $_POST['kategorie'];
+  // Einfügen des Getränks in die DB        $input_kategorie = $_POST['kategorie'];
 
 
         $query = $db->prepare("INSERT into getraenk (getraenkename,hersteller,preis,kategorie) values(?,?,?,?);");

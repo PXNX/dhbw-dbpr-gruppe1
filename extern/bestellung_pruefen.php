@@ -29,13 +29,13 @@ function sum_amounts($pos, $getraenk): array
 
     for ($i = 1; $i <= $pos; $i++) {
 
-        if (isset($_POST['getraenk' . $i]) && isset($_POST['anz' . $i]) && $_POST['anz' . $i] > 0) {
+        if (isset($_POST['getraenk' . $i]) && isset($_POST['anzahl' . $i]) && $_POST['anzahl' . $i] > 0) {
             $a_getraenk = $getraenk[$_POST['getraenk' . $i]];
             $hersteller = $a_getraenk['hersteller'];
             $name = $a_getraenk['getraenkename'];
 
             //Wir setzen zu einem Hersteller zu einem bestimmten Getränkenamen erhöhen wir die Anzahl i oder wenn noch nichts da ist haben wir 0+Anzahl
-            $sumgetraenk[$hersteller][$name] = ($sumgetraenk[$hersteller][$name] ?? 0) + $_POST['anz' . $i];
+            $sumgetraenk[$hersteller][$name] = ($sumgetraenk[$hersteller][$name] ?? 0) + $_POST['anzahl' . $i];
         }
 
 
@@ -69,10 +69,10 @@ function check_amounts($getraenk, array $sumgetraenk): bool
     return $is_correct;
 }
 
-if (isset($_SESSION['marktid']) && isset($_SESSION['position'])) {
+if (isset($_SESSION['extern-marktid']) && isset($_SESSION['positionsnr'])) {
     include '../include/db.inc.php';
-    $marktid = $_SESSION['marktid'];
-    $position = $_SESSION['position'];
+    $marktid = $_SESSION['extern-marktid'];
+    $position = $_SESSION['positionsnr'];
 
 //Statt * -> Auch g.getraenkename, g.hersteller und f.lagerbestand
     $query = $db->prepare("SELECT g.hersteller, g.getraenkename, f.lagerbestand FROM getraenk g, fuehrt f WHERE g.getraenkename=f.getraenkename and g.hersteller=f.hersteller and f.marktid= :marktid and f.lagerbestand>0");
