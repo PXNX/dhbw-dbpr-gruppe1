@@ -46,10 +46,13 @@ if (isset($_POST['market-id']) && isset($_POST['market-name']) && isset($_POST['
         return;
     }
 
-    $query = $db->prepare("INSERT into markt (marktid,marktname,marktkennwort) values(?,?,?)");
-    $query->execute([$input_id, $input_name, $input_pass]);
+    $query = $db->prepare("INSERT into markt (marktid,marktname,marktkennwort) values(:marktid, :marktname, :marktkennwort)");
+    $query->execute([
+        ':marktid' => $input_id,
+        ':marktname' => $input_name,
+        ':marktkennwort' => $input_pass]);
     $test = $query->fetchAll();
-    var_dump($test);
+
 
     $_SESSION["market-id"] = $input_id;
 
@@ -73,8 +76,9 @@ if (isset($_POST['market-id']) && isset($_POST['market-name']) && isset($_POST['
 function market_name_exists($market_name): bool
 {
     include "../include/db.inc.php";
-    $query = $db->prepare("SElect * from markt m where m.marktname=?");
-    $query->execute([$market_name]);
+    $query = $db->prepare("SElect * from markt m where m.marktname=:marktname");
+    $query->execute([
+        ':marktname' => $market_name]);
     $result = $query->fetchAll();
     return count($result) !== 0;
 }
@@ -82,8 +86,9 @@ function market_name_exists($market_name): bool
 function market_id_exists($market_id): bool
 {
     include "../include/db.inc.php";
-    $query = $db->prepare("SElect * from markt m where m.marktid=?");
-    $query->execute([$market_id]);
+    $query = $db->prepare("SElect * from markt m where m.marktid=:marktid");
+    $query->execute([
+        ':marktid' => $market_id]);
     $result = $query->fetchAll();
     return count($result) !== 0;
 }

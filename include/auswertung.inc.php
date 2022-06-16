@@ -1,6 +1,6 @@
 <?php class Auswertung {
-     private  $gesamtumsatz;
-     private $bestellung;
+    private  $gesamtumsatz;
+    private $bestellung;
     private $startdatum;
     private $kategorie;
     private $marktid;
@@ -146,11 +146,17 @@
         return $this->median;
     }
 
-    public function linearRegression($kalenderWochen, $umsatzSummen){
-        //y=b*x+a
-      
-
+     // Hypothesenfunktion y=m*x+a
+     // a = intercept = Achsenabschnitt
+     // m = gradient = Steigung
+    function hypothesis($intercept, $gradient){
+        return function($x) use ($intercept, $gradient) {
+            return $intercept + ($x * $gradient);
+        };
     }
+
+    
+
 
 
 }
