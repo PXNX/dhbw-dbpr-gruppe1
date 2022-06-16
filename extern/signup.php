@@ -1,17 +1,18 @@
 <?php
-include "../auth/auth.inc.php";
+session_start();
+include '../common/db.inc.php';
 ?>
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta author="Patricia Schäle">
+    <meta name="author" content="Patricia Schäle">
     <title>Kunde Registrieren</title>
 </head>
 <body>
 
 <h1 style="text-align:center"><p>Registrieren</p></h1>
 
-<form method="post" action="kunde_signup.php">
+<form method="post" action="signup.php">
 
 
     <label for="mailadresse">E-Mail Adresse:</label>
@@ -50,10 +51,10 @@ include "../auth/auth.inc.php";
 
 
     <input  id="kunde-signup"  type="submit" value="Registrieren">
-</form></br></br><a href="kunde_login.php">Anmelden</a>
+</form></br></br><a href="login.php">Anmelden</a>
 
 <?php
-include "../include/db.inc.php";
+include "../common/db.inc.php";
 
 if(isset($_POST['mailadresse']) && isset( $_POST['kundenkennwort'])
     && isset($_POST['kundenname']) && isset($_POST['strassenname'])
@@ -90,14 +91,14 @@ if(isset($_POST['mailadresse']) && isset( $_POST['kundenkennwort'])
 
     $_SESSION["mailadresse"] = $mailadresse;
 
-    header('Location: kunde_login.php', true, 301);
+    header('Location: login.php', true, 301);
     exit();
 
 }
 
 function mail_exists($mailadresse): bool
 {
-    include "../include/db.inc.php";
+    include "../common/db.inc.php";
     $query = $db->prepare("SELECT * from kunde k where k.mailadresse=:mailadresse");
     $query->execute([
         ':mailadresse' => $mailadresse]);

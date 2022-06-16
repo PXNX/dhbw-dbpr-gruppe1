@@ -1,5 +1,6 @@
 <?php
-include "../auth/auth.inc.php";
+session_start();
+include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -70,7 +71,7 @@ function check_amounts($getraenk, array $sumgetraenk): bool
 }
 
 if (isset($_SESSION['extern-marktid']) && isset($_SESSION['positionsnr'])) {
-    include '../include/db.inc.php';
+    include '../common/db.inc.php';
     $marktid = $_SESSION['extern-marktid'];
     $position = $_SESSION['positionsnr'];
 
@@ -88,10 +89,10 @@ if (isset($_SESSION['extern-marktid']) && isset($_SESSION['positionsnr'])) {
 
     if (check_amounts($getraenk, $sumgetraenk)) {
         $_SESSION["order"] = $sumgetraenk;
-        include "../include/util.inc.php";
-        redirect("kunde_login.php");
+        header("Location: login.php", true, 301);
+        exit();
     } else {
-        echo '<a href="bestellung_erfassen.php">Bestellung überarbeiten</a>';
+        echo '<a href="erfassung.php">Bestellung überarbeiten</a>';
     }
 
 }

@@ -7,8 +7,8 @@
 <body>
 <p>Herzlich Willkommen!</p>
 <ul>
-    <li><a href="/intern.php">Mitarbeiter</a></li>
-    <li><a href="/extern.php">Extern</a></li>
+    <li><a href="/intern/index.php">Mitarbeiter</a></li>
+    <li><a href="/extern/index.php">Extern</a></li>
 </ul>
 </body>
 </html>

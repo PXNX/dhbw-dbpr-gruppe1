@@ -1,6 +1,6 @@
 <?php
-include "auth/auth.inc.php";
-include 'include/db.inc.php';
+include "common/auth.inc.php";
+include 'common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -55,7 +55,7 @@ if (isset($_POST['getraenk']) && isset($_POST['lagerbestand'])) {
 
 function saveLagerbestand(string $getraenkename, string $hersteller, int $lagerbestand)
 {
-    include "include/db.inc.php";
+    include "common/db.inc.php";
     $query = $db->prepare("insert into fuehrt(getraenkename,hersteller,lagerbestand,marktid) values(:getraenkename, :hersteller, :lagerbestand, :marktid) on duplicate key update lagerbestand = :lagerbestand");
     $result = $query->execute([
         ':getraenkename' => $getraenkename,
@@ -70,7 +70,7 @@ function saveLagerbestand(string $getraenkename, string $hersteller, int $lagerb
 // Unnötig?
 function getraenk_exists($getraenkename, $hersteller): bool
 {
-    include "include/db.inc.php";
+    include "common/db.inc.php";
     $query = $db->prepare("Select * from fuehrt where getraenkename=? and hersteller=? and marktid=?");
     $query->execute([$getraenkename, $hersteller, $_SESSION['market-id']]);
     $result = $query->fetchAll();

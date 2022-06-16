@@ -1,5 +1,6 @@
 <?php
-include "../auth/auth.inc.php";
+session_start();
+include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -24,7 +25,7 @@ include "../auth/auth.inc.php";
 <?php
 
 ?>
-<form action="bestellung_pruefen.php" method="post">
+<form action="pruefung.php" method="post">
     <table>
         <tr>
             <td>Positionsnummer</td>
@@ -32,7 +33,7 @@ include "../auth/auth.inc.php";
             <td>Anzahl</td>
         </tr>
 
-        <?php include '../include/db.inc.php';
+        <?php include '../common/db.inc.php';
         if (isset($_POST['extern-marktid']) && isset($_POST['positionsnr'])){
             $_SESSION['extern-marktid'] = $_POST['extern-marktid'];
             $_SESSION['positionsnr'] = $_POST['positionsnr'];

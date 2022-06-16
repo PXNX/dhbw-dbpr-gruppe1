@@ -1,5 +1,5 @@
 <?php
-include "include/auth.inc.php";
+include "common/auth.inc.php";
 ?>
 <!DOCTYPE html>
 <html>
@@ -17,6 +17,6 @@ include "include/auth.inc.php";
     <li><a href="/auswertung.php">Auswertung</a></li>
 </ul>
 <br><br>
-<a href="auth/logout.php">Logout</a>
+<a href="logout.php">Logout</a>
 </body>
 </html>

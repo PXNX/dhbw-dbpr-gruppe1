@@ -1,5 +1,6 @@
 <?php
-include "auth/auth.inc.php";
+session_start();
+include 'common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -43,7 +44,7 @@ if (isset($_POST["start-date"]) && isset($_POST["kategorie"])) {
     $start_date = $_POST["start-date"];
     $kategorie = $_POST["kategorie"];
 
-    include "include/auswertung.inc.php";
+    include "common/auswertung.inc.php";
     $auswertung = new Auswertung($_SESSION["market-id"], $start_date, $kategorie);
 //  $auswertung->calculateKennzahlen($start_date, $kategorie);
 

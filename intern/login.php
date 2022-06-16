@@ -1,5 +1,6 @@
 <?php
-include "auth.inc.php";
+session_start();
+include 'common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -13,12 +14,12 @@ include "auth.inc.php";
 
 <form method="post" action="login.php">
 
-    <label for="market-id">Markt ID:</label>
-    <input type="text" id="market-id" name="market-id" required>
+    <label for="marktid">Markt ID:</label>
+    <input type="text" id="marktid" name="marktid" required>
     <br><br>
 
-    <label for="market-pass">Markt Passwort:</label>
-    <input id="market-pass" name="market-pass" type="password" required>
+    <label for="marktkennwort">Markt Passwort:</label>
+    <input id="marktkennwort" name="marktkennwort" type="password" required>
     <br><br>
 
     <input id="market-login" type="submit" value="Einloggen">
@@ -28,26 +29,25 @@ include "auth.inc.php";
 <a href="signup.php">Markt registrieren</a>
 
 <?php
-if (isset($_POST['market-id']) && isset($_POST['market-pass'])) {
-    login($_POST['market-id'], $_POST['market-pass']);
+if (isset($_POST['marktid']) && isset($_POST['marktkennwort'])) {
+    login($_POST['marktid'], $_POST['marktkennwort']);
 }
 
-function login(string $input_id, string $input_pass)
+function login(string $marktid, string $marktkennwort)
 {
-    include_once "../include/db.inc.php";
     $query = $db->prepare("SELECT marktkennwort from markt where marktid=:marktid");
     $query->execute([
-        ':marktid' => $input_id]);
+        ':marktid' => $marktid]);
     $correct_pass = $query->fetchAll(PDO::FETCH_COLUMN)[0];
 
-    if (password_verify($input_pass, $correct_pass)) {
-        $_SESSION["market-id"] = $input_id;
+    if (password_verify($marktkennwort, $correct_pass)) {
+        $_SESSION["marktid"] = $marktid;
 
         /*
         Hier könnte man auch direkt auf die zuvor angeforderte Url weiterleiten, dies ist aber keine AF.
         Deshalb nur auf die Startseite für interne Mitarbeiter.
         */
-        header('Location: ../intern.php', true, 301);
+        header('Location: ../index.php', true, 301);
         exit();
 
     } else {
