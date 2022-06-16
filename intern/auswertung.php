@@ -15,7 +15,7 @@ include 'common/db.inc.php';
 <form method="post" action="auswertung.php">
 
     <select name="kategorie">
-        <option value="wasser">Alle Kategorien</option>
+        <option value="">Alle Kategorien</option>
         <option value="wasser">Wasser</option>
         <option value="saft">Saft</option>
         <option value="limonade">Limonade</option>
@@ -42,10 +42,10 @@ include 'common/db.inc.php';
 if (isset($_POST["start-date"]) && isset($_POST["kategorie"])) {
 
     $start_date = $_POST["start-date"];
-    $kategorie = $_POST["kategorie"];
+    $kategorie = empty($_POST["kategorie"]) ? null : $_POST["kategorie"];
 
     include "common/auswertung.inc.php";
-    $auswertung = new Auswertung($_SESSION["market-id"], $start_date, $kategorie);
+    $auswertung = new Auswertung($_SESSION["marktid"], $start_date, $kategorie);
 //  $auswertung->calculateKennzahlen($start_date, $kategorie);
 
     $bestellung = $auswertung->getBestellung();
@@ -54,7 +54,9 @@ if (isset($_POST["start-date"]) && isset($_POST["kategorie"])) {
     $median = $auswertung->getMedian();
 
     echo("Gesamtumsatz der Woche: $bestellung EUR<br>
-  Umsatz der größten Bestellung der Woche: $gesamtumsatz EUR<br>
+  Umsatz der größten Bestellung der Woche: $gesamtumsatz EUR<b<br>
+  Voraussichtlicher Umsatz diese Woche: ...<br>
+  Voraussichtlicher Umsatz nächste Woche: ...r>
   Standardabweichung der Umsätze aller Bestellungen der Woche: $standardabweichung EUR<br>
   Median der Umsätze aller Bestellungen der Woche: $median EUR");
 

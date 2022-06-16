@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../common/db.inc.php';
+include '../../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -11,7 +11,7 @@ include '../common/db.inc.php';
 
     <!--
     ToDo:
-    - try-cath Blöcke für die db-Verbindungen/Abfragen
+    - try-catch Blöcke für die db-Verbindungen/Abfragen
     - Kommentare checken
     - Namensgebung eindeutig
     -->
@@ -24,9 +24,7 @@ include '../common/db.inc.php';
     -->
 
     <?php
-    if(isset($_SESSION['order']) && isset($_SESSION['extern-marktid']) && isset($_SESSION['mailadresse'])){
-
-        include_once "../common/db.inc.php";
+    if (isset($_SESSION['order']) && isset($_SESSION['extern-marktid']) && isset($_SESSION['mailadresse'])) {
 
 
         //Bestellung wird angelegt mit aktuellem Datum
@@ -34,20 +32,20 @@ include '../common/db.inc.php';
         $result = $query->execute([
             ':bestelldatum' => date('Y-m-d'),
             ':marktid' => $_SESSION['extern-marktid'],
-            ':mailadresse' =>$_SESSION['mailadresse']
+            ':mailadresse' => $_SESSION['mailadresse']
         ]);
 
 
         //Bestellpositionen zur Bestellung werden angelegt
         $bestellnr = $db->lastInsertId();
         $positionsnr = 1;
-        foreach($_SESSION['order'] as $hersteller => $getraenke){
+        foreach ($_SESSION['order'] as $hersteller => $getraenke) {
 
-            foreach($getraenke as $getraenkename => $anzahl){
+            foreach ($getraenke as $getraenkename => $anzahl) {
                 $query = $db->prepare("CALL bestellposition_buchen(:bestellnr, :positionsnr, :anzahl, :getraenkename, :hersteller);");
                 $result = $query->execute([
                     ':bestellnr' => $bestellnr,
-                    ':positionsnr' =>$positionsnr,
+                    ':positionsnr' => $positionsnr,
                     ':anzahl' => $anzahl,
                     ':getraenkename' => $getraenkename,
                     ':hersteller' => $hersteller
@@ -57,8 +55,10 @@ include '../common/db.inc.php';
 
         }
 
-        echo'<h1>Ihre Bestellung wurde erfolgreich abgeschlossen!</h1>';
+        echo '<h1>Ihre Bestellung wurde erfolgreich abgeschlossen!</h1><a href="../index.php">Neue Bestellung anlegen</a>';
+    } else {
 
+        echo "Bestellung, MarkId oder Mail wurden nicht gesetzt.";
     }
 
     ?>

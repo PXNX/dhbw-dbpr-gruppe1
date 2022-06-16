@@ -37,9 +37,9 @@ include '../common/db.inc.php';
         $markt = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         //Foreach Schleife legt die Marktid jedes in dem Array $markt abgelegt Datensatzes in ein $marktid Array
-        foreach($markt as $row) {
+        foreach ($markt as $row) {
             $marktid = $row["marktid"];
-            echo'<option value="'. $marktid.'">'.$marktid.' - '.$row["marktname"].'</option>';
+            echo '<option value="' . $marktid . '">' . $marktid . ' - ' . $row["marktname"] . '</option>';
         }
         ?>
     </select>
@@ -47,12 +47,15 @@ include '../common/db.inc.php';
     <!-- Eingabefeld für die Anzahl der Bestellpositionen. Eingabe erlaubt nur ganze Zahlen >= 1 -->
     <table>
         <tr>
-            <td><label for="positionsnr"><b>Anzahl Bestellpositionen:</b></label> </td>
-            <td><input type="number" min="1" name="positionsnr" size="40" value='<?php echo $_SESSION['positionsnr']; ?>' required/><br></td>
+            <td><label for="positionsnr"><b>Anzahl Bestellpositionen:</b></label></td>
+            <td><input type="number" min="1" name="positionsnr" size="40"
+                       value='<?php echo $_SESSION['positionsnr']; ?>' required/><br></td>
         </tr>
-    </table><br>
+    </table>
+    <br>
     <!-- Daten werden an bestellung_erfassen.php übertragen --->
-    <button type="submit" name="erfassen" >Erfassungsformular erstellen</button></br>
+    <button type="submit" name="erfassen">Erfassungsformular erstellen</button>
+    </br>
 </form>
 </body>
 </html>

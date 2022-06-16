@@ -48,8 +48,6 @@ if (isset($_POST['marktid']) && isset($_POST['marktname']) && isset($_POST['mark
         ':marktid' => $marktid,
         ':marktname' => $marktname,
         ':marktkennwort' => $marktkennwort]);
-    $test = $query->fetchAll();
-
 
     $_SESSION["marktid"] = $marktid;
 
@@ -58,7 +56,7 @@ if (isset($_POST['marktid']) && isset($_POST['marktname']) && isset($_POST['mark
 
 } else {
 
-//leitet auf vorige Seite weiter
+//Damit nicht bei erstmaligem Seitenaufruf gleich eine Warnung wegen inkorrekter Passworteingabe kommt
     if (empty($_SERVER['HTTP_REFERER']) ||
         preg_match('$' . (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . $_SERVER['REQUEST_URI'] . '$',
             $_SERVER['HTTP_REFERER'])

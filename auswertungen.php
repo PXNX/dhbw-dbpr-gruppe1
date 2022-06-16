@@ -12,7 +12,7 @@ include 'common/db.inc.php';
 <body>
 <h1 style="text-align:center"><p>Auswertungen der Bestellungen</p></h1>
 
-<form method="post" action="auswertung.php">
+<form method="post" action="intern/auswertung.php">
 
     <label for="market-id">Markt ID:</label>
     <input type="text" id="market-id" name="market-id" required>

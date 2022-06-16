@@ -1,6 +1,6 @@
 <?php
 session_start();
-include '../common/db.inc.php';
+include '../../common/db.inc.php';
 ?>
 <!DOCTYPE html>
 <html>
@@ -33,17 +33,16 @@ include '../common/db.inc.php';
             <td>Anzahl</td>
         </tr>
 
-        <?php include '../common/db.inc.php';
-        if (isset($_POST['extern-marktid']) && isset($_POST['positionsnr'])){
+        <?php
+        if (isset($_POST['extern-marktid']) && isset($_POST['positionsnr'])) {
             $_SESSION['extern-marktid'] = $_POST['extern-marktid'];
             $_SESSION['positionsnr'] = $_POST['positionsnr'];
         }
 
-        if(isset($_SESSION['extern-marktid']) && isset($_SESSION['positionsnr'])){
+        if (isset($_SESSION['extern-marktid']) && isset($_SESSION['positionsnr'])) {
 
             $marktid = $_SESSION['extern-marktid'];
             $positionsnr = $_SESSION['positionsnr'];
-
 
 
 //Statt * -> Auch g.getraenkename, g.hersteller und f.lagerbestand
@@ -52,20 +51,20 @@ include '../common/db.inc.php';
                 ':marktid' => $marktid]);
             $getraenk = $query->fetchAll();
 
-            for ($i = 1;$i <= $positionsnr;$i++) {
+            for ($i = 1; $i <= $positionsnr; $i++) {
 
-                echo '<tr><td>'.$i.'</td><td><select id="getraenk" name="getraenk'.$i.'" required>';
+                echo '<tr><td>' . $i . '</td><td><select id="getraenk" name="getraenk' . $i . '" required>';
 
 
-                foreach($getraenk as $key=> $row) {
+                foreach ($getraenk as $key => $row) {
                     $hersteller = $row["hersteller"];
                     $getraenkename = $row["getraenkename"];
-                    echo'<option value="'.$key.'">'.$hersteller.' - '.$getraenkename.'</option>';
+                    echo '<option value="' . $key . '">' . $hersteller . ' - ' . $getraenkename . '</option>';
                 }
 
-                echo'   </select></td>
+                echo '   </select></td>
             
-            <td><input name="anzahl'.$i.'" size="10" maxlength="5" value="" required/></td>
+            <td><input name="anzahl' . $i . '" size="10" maxlength="5" value="" required/></td>
         </tr>';
             }
         }

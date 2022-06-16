@@ -140,16 +140,45 @@
         return $this->median;
     }
 
+
+    // Hypothesenfunktion y=m*x+a
+    // a = intercept = Achsenabschnitt
+    // m = gradient = Steigung
     function hypothesis($intercept, $gradient)
     {
+        //Daten x Werte
+        foreach($kalenderWochen as $woche){
+            $x[] = $woche[''];
+        }
+
+        //Daten y Werte  
+        foreach($wochenUmsaetze as $u){
+            $y[] = $u[''];
+        }
+
+        //Mittelwert x Werte
+
+
+
+        //Mittelwert y Werte
+
         return function ($x) use ($intercept, $gradient) {
             return $intercept + ($x * $gradient);
         };
     }
 
-    // Hypothesenfunktion y=m*x+a
-    // a = intercept = Achsenabschnitt
-    // m = gradient = Steigung
+    
+     // Return the sum of squared errors
+     function score($data, $hypothesis) {
+        $score = 0;
+        foreach($data as $row) {
+                $score += pow($hypothesis($row[0]) - $row[1], 2);
+        }
+        return $score;
+    }
+
+
+
 
     /** @author Marcel Bitschi */
     private function setKalenderWochen($startdatum)

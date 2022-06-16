@@ -33,6 +33,11 @@ if (isset($_POST['marktid']) && isset($_POST['marktkennwort'])) {
     login($_POST['marktid'], $_POST['marktkennwort']);
 }
 
+/**
+ * Nutzer anhand der Zugangsdaten einloggen.
+ * @author Felix Huber
+ */
+
 function login(string $marktid, string $marktkennwort)
 {
     $query = $db->prepare("SELECT marktkennwort from markt where marktid=:marktid");
