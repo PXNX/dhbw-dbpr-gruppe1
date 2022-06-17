@@ -21,18 +21,18 @@ include '../common/db.inc.php';
 
         <!-- Eingabefeld Getränkename-->
         <tr>
-            <td><label for="getraenk"><b>Getränk:</b></label></td>
-            <td><input id="getraenk" name="getränk" size="40" maxlength="60" value="" required/><br></td>
+            <td><label for="getraenkename"><b>Getränkename:</b></label></td>
+            <td><input id="getraenkename" name="getraenkename" size="40" maxlength="60" value="" required/><br></td>
         </tr>
 
         <!-- Eingabefeld Getränkepreis-->
         <tr>
-            <td><label for="preis"><b>Preis:</b></label></td>
+            <td><label for="preis"><b>Preis (in EUR):</b></label></td>
             <td><input id="preis" name="preis" type="number" min="0" step=".01" size="40" maxlength="5" value=""
                        required/><br></td>
         </tr>
 
-            <!-- Eingabefeld Getränkehersteller-->
+        <!-- Eingabefeld Getränkehersteller-->
         <tr>
             <td><label for="hersteller"><b>Hersteller:</b></label></td>
             <td><input id="hersteller" name="hersteller" size="40" maxlength="40" value=""/><br></td>
@@ -57,16 +57,19 @@ include '../common/db.inc.php';
         </form>
         <?php
 
-        if (isset($_POST['getränk']) && ($_POST['preis']) && ($_POST['hersteller']) && ($_POST['kategorie'])) {
-            $input_getraenk = $_POST['getränk'];
-            $input_preis = $_POST['preis'];
-            $input_hersteller = $_POST['hersteller'];
-            $input_kategorie = $_POST['kategorie'];
-            // Einfügen des Getränks in die DB        $input_kategorie = $_POST['kategorie'];
+        if (isset($_POST['getraenk']) && ($_POST['preis']) && ($_POST['hersteller']) && ($_POST['kategorie'])) {
+            $getraenkename = $_POST['getraenkename'];
+            $preis = $_POST['preis'];
+            $hersteller = $_POST['hersteller'];
+            $kategorie = $_POST['kategorie'];
+            // Einfügen des Getränks in die DB        $kategorie = $_POST['kategorie'];
 
 
-            $query = $db->prepare("INSERT into getraenk (getraenkename,hersteller,preis,kategorie) values(?,?,?,?);");
-            $query->execute([$input_getraenk, $input_hersteller, $input_preis, $input_kategorie]);
+            $query = $db->prepare("INSERT into getraenk (getraenkename,hersteller,preis,kategorie) values(:getraenkename,:hersteller,:preis,:kategorie);");
+            $query->execute(["getraenkename" => $getraenkename,
+                "hersteller" => $hersteller,
+                "preis" => $preis,
+                "kategorie" => $kategorie]);
             $test = $query->fetchAll();
         }
         ?>

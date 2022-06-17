@@ -54,7 +54,7 @@ include '../../common/db.inc.php';
             //Direkte Abfrage nach den Getränken eines spezifischen Marktes mit positivem Lagerbestand
             $query = $db->prepare("SELECT * FROM getraenk g, fuehrt f WHERE g.getraenkename=f.getraenkename and g.hersteller=f.hersteller and f.marktid = :marktid and f.lagerbestand>0");
             $query->execute([
-                ':marktid' => $marktid]);
+                'marktid' => $marktid]);
             $getraenk = $query->fetchAll();
             }catch(Exception $e){
                 echo 'Es ist ein Fehler bei der Bestellerfassung aufgetreten.

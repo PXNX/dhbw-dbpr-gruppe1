@@ -61,13 +61,13 @@ if (isset($_POST['mailadresse']) && isset($_POST['kundenkennwort'])
 
     $query = $db->prepare("INSERT into kunde (hausnummer, kundenkennwort, kundenname, mailadresse, ort, plz, strassenname) values(:hausnummer, :kundenkennwort, :kundenname, :mailadresse, :ort, :plz, :strassenname)");
     $query->execute([
-        ':hausnummer' => $hausnummer,
-        ':kundenkennwort' => $kundenkennwort,
+        'hausnummer' => $hausnummer,
+        'kundenkennwort' => $kundenkennwort,
         'kundenname' => $kundenname,
         'mailadresse' => $mailadresse,
-        ':ort' => $ort,
-        ':plz' => $plz,
-        ':strassenname' => $strassenname]);
+        'ort' => $ort,
+        'plz' => $plz,
+        'strassenname' => $strassenname]);
 
     $_SESSION["mailadresse"] = $mailadresse;
 

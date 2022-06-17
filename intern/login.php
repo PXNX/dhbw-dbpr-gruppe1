@@ -41,8 +41,7 @@ function login(string $marktid, string $marktkennwort)
 {
     include '../common/db.inc.php';
     $query = $db->prepare("SELECT marktkennwort from markt where marktid=:marktid");
-    $query->execute([
-        ':marktid' => $marktid]);
+    $query->execute(['marktid' => $marktid]);
     $correct_pass = $query->fetchAll(PDO::FETCH_COLUMN)[0];
 
     if (password_verify($marktkennwort, $correct_pass)) {

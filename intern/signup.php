@@ -89,8 +89,7 @@ function marktid_exists($marktid): bool
 {
     include "../common/db.inc.php";
     $query = $db->prepare("Select * from markt m where m.marktid=:marktid");
-    $query->execute([
-        ':marktid' => $marktid]);
+    $query->execute(['marktid' => $marktid]);
     $result = $query->fetchAll();
     return count($result) !== 0;
 }

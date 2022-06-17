@@ -78,7 +78,7 @@ if (isset($_SESSION['extern-marktid']) && isset($_SESSION['positionsnr'])) {
 
     $query = $db->prepare("SELECT g.hersteller, g.getraenkename, f.lagerbestand FROM getraenk g, fuehrt f WHERE g.getraenkename=f.getraenkename and g.hersteller=f.hersteller and f.marktid= :marktid and f.lagerbestand>0");
     $query->execute([
-        ':marktid' => $marktid]);
+            'marktid' => $marktid]);
     $getraenk = $query->fetchAll();
 
 

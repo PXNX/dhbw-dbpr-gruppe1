@@ -57,10 +57,10 @@ function saveLagerbestand(string $getraenkename, string $hersteller, int $lagerb
     include "../common/db.inc.php";
     $query = $db->prepare("insert into fuehrt(getraenkename,hersteller,lagerbestand,marktid) values(:getraenkename, :hersteller, :lagerbestand, :marktid) on duplicate key update lagerbestand = :lagerbestand");
     $result = $query->execute([
-        ':getraenkename' => $getraenkename,
-        ':hersteller' => $hersteller,
-        ':lagerbestand' => $lagerbestand,
-        ':marktid' => $_SESSION['marktid']]);
+        'getraenkename' => $getraenkename,
+        'hersteller' => $hersteller,
+        'lagerbestand' => $lagerbestand,
+        'marktid' => $_SESSION['marktid']]);
     if ($result) {
         echo 'Lagerbestand wurde erfolgreich gespeichert!';
     }

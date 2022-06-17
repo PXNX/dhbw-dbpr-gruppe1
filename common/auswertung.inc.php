@@ -1,10 +1,12 @@
 <?php
+
+
 include "db.inc.php";
 
 class Auswertung
 {
     private $gesamtumsatz;
-    private $bestellung;
+    private $groesste;
     private $startdatum;
     private $kategorie;
     private $marktid;
@@ -14,7 +16,11 @@ class Auswertung
     private $standardabweichungen;
     // private $umsatzFolgewoche;
 
-    /** @author Felix Huber */
+
+    /**
+     * Klassenattribute mit Parametern und Berechnungsergebnissen initialisieren.
+     * @author Felix Huber
+     */
     public function __construct($marktid, $startdatum, $kategorie)
     {
         $this->marktid = $marktid;
@@ -35,6 +41,44 @@ class Auswertung
     {
         include "db.inc.php";
         $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid); ");
+        $query->execute([
+            'kategorie' => $this->kategorie,
+            'startdatum' => $this->startdatum,
+            "marktid" => $this->marktid
+        ]);
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        //var_dump($result);
+        return $result;
+    }
+
+    /**
+     * Stored Procedure zur Berechnung des Umsatzes der größten Bestellung je Woche aufrufen.
+     * @author Felix Huber
+     */
+    public function berechne_groesste(): array
+    {
+        include "db.inc.php";
+        $query = $db->prepare("call sp_groesste(:kategorie, :startdatum, :marktid); ");
+        $query->execute([
+            'kategorie' => $this->kategorie,
+            'startdatum' => $this->startdatum,
+            "marktid" => $this->marktid
+        ]);
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        //var_dump($result);
+        return $result;
+    }
+
+    /**
+     * Stored Procedure zur Berechnung des Medians aller Umsätze je Woche aufrufen.
+     * @author Felix Huber
+     */
+    public function berechne_median(): array
+    {
+        include "db.inc.php";
+        $query = $db->prepare("call sp_median(:kategorie, :startdatum, :marktid); ");
         $query->execute([
             'kategorie' => $this->kategorie,
             'startdatum' => $this->startdatum,
@@ -111,7 +155,7 @@ class Auswertung
     {
         $kalenderWochen = $this->kalenderWochen;
         $umsaetze = $this->wochenUmsaetze;
-        $this->standardabweichungen = $this->standardabweichungBerechnung($kalenderWochen, $umsaetze);
+        $this->standardabweichungen = $this->berechne_standardabweichung($kalenderWochen, $umsaetze);
         return $this->standardabweichungen;
     }
 
@@ -130,7 +174,7 @@ class Auswertung
                     $umsatzQuadratsumme += $umsatz ** 2;
                 }
 
-                    $arithmetischesMittel = $umsatzsumme / $count;
+                $arithmetischesMittel = $umsatzsumme / $count;
 
                 $varianz = 1 / $count * $umsatzQuadratsumme - ($arithmetischesMittel ** 2);
                 $standardabweichung = sqrt($varianz);
@@ -180,12 +224,20 @@ class Auswertung
         return $this->gesamtumsatz;
     }
 
-    function getBestellung(): float
+    /**
+     * Getter für das Ergebnis der Berechnung der größten Bestellung.
+     * @author Felix Huber
+     */
+    function getGroesste(): array
     {
-        return $this->bestellung;
+        return $this->groesste;
     }
 
-    function getMedian(): float
+    /**
+     * Getter für das Ergebnis der Berechnung des Medians.
+     * @author Felix Huber
+     */
+    function getMedian(): array
     {
         return $this->median;
     }
@@ -254,14 +306,15 @@ class Auswertung
 
 
     /** @author Patricia Schäle */
-    function arithmetischesMittel($werte){
+    function arithmetischesMittel($werte)
+    {
         if (count($werte)) {
             $count = count($werte);
             foreach ($werte as $w) {
                 $summe += $w;
             }
-        return $arithmetischesMittel = $summe / $count;
-    }
+            return $arithmetischesMittel = $summe / $count;
+        }
     }
 
 }
