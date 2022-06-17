@@ -7,6 +7,12 @@ include '../common/db.inc.php';
     <meta charset="UTF-8">
     <meta name="author" content="Patricia Schäle">
     <title>Kunde Registrieren</title>
+    <!--
+    Allgemeine Erläuterung:
+    Der Kunde hat die Möglichkeit sich zu Registrieren. Für einen neuen Kundenaccount sind Mail-Adresse, Kennwort, Name
+    und Adresse erforderlich. Man könnte hierzu eine Klasse anlegen, was sich aber in dem noch recht geringen Rahmen
+    nicht lohnt.
+-->
 </head>
 <body>
 
@@ -81,7 +87,7 @@ function mail_exists($mailadresse): bool
     include "../common/db.inc.php";
     $query = $db->prepare("SELECT * from kunde k where k.mailadresse=:mailadresse");
     $query->execute([
-        ':mailadresse' => $mailadresse]);
+        'mailadresse' => $mailadresse]);
     $result = $query->fetchAll();
     return count($result) !== 0;
 }

@@ -9,54 +9,37 @@
 
 <?php
 
-$kategorie = 'Limonade';
+$kategorie = '%';
 $startdatum = '2022-01-01';
 $marktid = 69;
 include_once "common/db.inc.php";
-    $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid);");
-    $query->execute([
-        ':kategorie' =>$kategorie,
-        ':startdatum' =>$startdatum,
-        ':marktid' =>$marktid,
-    ]);
-$result = $query->fetchAll();
+$query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid);");
+$query->execute([
+    ':kategorie' =>$kategorie,
+    ':startdatum' =>$startdatum,
+    ':marktid' =>$marktid,
+]);
+$umsaetze = $query->fetchAll();
 
-foreach($result as $row){
+/*foreach($result as $row){
    $daten[]=date('W', strtotime($row["start_date"]));
    $umsaetze[] = $row["total"];
+}*/
+
+$x_values=array();
+$y_values=array();
+
+for($i = 1; $i<count($umsaetze)-1; $i++){
+    $x_values += $umsaetze[$i-1];
+    $y_values += $umsaetze[$i];
 }
+var_dump($x_values);
 
-echo $result;
-
-//date('d.m.Y', strtotime('-1 week')); // Jetzt minus 1 Woche, als Datum
-//Startwoche bis vorletzte Woche
-//Startwoche+1 bis letzte Woche
-//$bb_week = date('W') -2;
-//$b_week = date('W') -1;
-//$s_week = date('W', strtotime($startdatum));
-
-//var_dump($bb_week);
-//var_dump($b_week);
-//var_dump($s_week);
-
-/*$count=0;
-
-for($i=$s_week;$i<=$bb_week;$i++){
-    if(in_array($i, $daten)){
-        $count+=$count;
-    }
-}
-
-var_dump($count);*/
-
-$zeitraum = new \DatePeriod($start, $interval,$ende);
-
-foreach ($zeitraum as $date) {
-    echo $date->format('d.m.Y') . '<br>';
-}
+var_dump($y_values);
 
 
 
+/*
 $xArray = $daten;
 $yArray = $umsaetze;
 
@@ -65,17 +48,17 @@ if(count($xArray)!==count($yArray)){
 }
 
 // Calculate Sums
-$xSum=0; 
-$ySum=0; 
-$xxSum=0; 
+$xSum=0;
+$ySum=0;
+$xxSum=0;
 $xySum=0;
 
 $count = count($xArray);
 for ($i = 0; $i < $count; $i++) {
-  $xSum += $xArray[$i];
-  $ySum += $yArray[$i];
-  $xxSum += $xArray[$i] * $xArray[$i];
-  $xySum += $xArray[$i] * $yArray[$i];
+    $xSum += $xArray[$i];
+    $ySum += $yArray[$i];
+    $xxSum += $xArray[$i] * $xArray[$i];
+    $xySum += $xArray[$i] * $yArray[$i];
 }
 
 // Calculate slope (Steigung) and intercept(Verschiebung)
@@ -93,11 +76,10 @@ number_format($vorhersage1,2,'.', ',');
 $nächsteWoche = $dieseWoche+1;
 $vorhersage2 =(($nächsteWoche*$slope)+$intercept);
 
-//echo number_format($vorhersage1,2,'.',',');
-//echo number_format($vorhersage2,2,'.',',');
+//echo number_format($vorhersage1,2,'.',','); //Vorhersage aktuelle Woche
+//echo number_format($vorhersage2,2,'.',','); //Vorhersage folgende Woche
 
-
-
+*/
 ?>
 </body>
 </html>

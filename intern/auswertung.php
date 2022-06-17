@@ -106,31 +106,8 @@ if (isset($_POST["startdatum"]) && isset($_POST["kategorie"])) {
     }
     echo "</table><br><hr>";
 
-    echo "---------";
-    //var_dump($standardabweichung);
-
-/*
-
-    echo("Gesamtumsatz der Woche: $bestellung EUR<br>
-  Umsatz der größten Bestellung der Woche: $gesamtumsatz EUR<b<br>
-  Voraussichtlicher Umsatz diese Woche: ...<br>
-  Voraussichtlicher Umsatz nächste Woche: ...<br>
-  Standardabweichung der Umsätze aller Bestellungen der Woche: $standardabweichung EUR<br>
-  Median der Umsätze aller Bestellungen der Woche: $median EUR");
-*/
-    //var_dump($gesamtumsatz);
-
-
-
-
-    echo "-------------";
-
-
-   //var_dump($gesamtumsatz);
-
 
 }
-
 
 
 ?>

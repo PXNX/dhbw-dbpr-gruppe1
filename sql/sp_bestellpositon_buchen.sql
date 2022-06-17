@@ -2,7 +2,8 @@
 @author Patricia Schäle
 
 Allgemeine Erläuterung:
-Stored Procedure dient dazu die Bestellpositionen der Kundenbestellung anzulegen
+Stored Procedure dient dazu die Bestellpositionen der Kundenbestellung anzulegen.
+
 */
 DELIMITER $$
 CREATE

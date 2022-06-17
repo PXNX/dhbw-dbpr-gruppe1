@@ -8,6 +8,12 @@ include '../common/db.inc.php';
     <meta charset="UTF-8">
     <meta name="author" content="Felix Huber">
     <title>Neuen Markt anlegen</title>
+    <!--
+    Allgemeine Erläuterung:
+    Der Mitarbeiter hat die Möglichkeit sich zu Registrieren. Für einen neuen Mitarbeiteraccount sind Markid und Kennwort
+    erforderlich. Letzteres wird gehasht gespeichert. Man könnte hierzu eine Klasse anlegen, was sich aber in dem noch
+    recht geringen Rahmen nicht lohnt.
+-->
 </head>
 <body>
 

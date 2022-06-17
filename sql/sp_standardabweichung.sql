@@ -1,3 +1,5 @@
+-- @author Marcel Bitschi
+-- Stored Procedure zur Berechnung der Standardabweichung
 DELIMITER $$
 CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_standardabweichung`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
 begin
@@ -10,13 +12,14 @@ begin
     create temporary table temp_res
     (
         start_date date primary key,
-        total      DECIMAL(7, 2)
+        total      DECIMAL(13, 2)
     );
 
 
     l1:
     while start_date <= current_date
         do
+        -- ermitteln von x strich
          set avg_value := (SELECT AVG(half.total)
             FROM (SELECT sum(g.preis * p.anzahl) as total
                   from bestellposition p,
@@ -31,6 +34,7 @@ begin
                   group by p.bestellnr ) as half);
 
      insert into temp_res
+     -- aufsummieren der quadrierten subtraktionen
     SELECT start_date, sum(power(half.total - avg_value, 2))/count(*) as standarddeviation
     FROM (SELECT sum(g.preis * p.anzahl) as total
                   from bestellposition p,

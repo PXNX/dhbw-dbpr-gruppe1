@@ -10,10 +10,10 @@ class Auswertung
     private $startdatum;
     private $kategorie;
     private $marktid;
-    private $kalenderWochen;
-    private $betrachtungszeitraumRegression;
-    private $wochenUmsaetze;
-    private $standardabweichungen;
+    // private $kalenderWochen;
+    // private $betrachtungszeitraumRegression;
+    // private $wochenUmsaetze;
+    // private $standardabweichungen;
     // private $umsatzFolgewoche;
 
 
@@ -90,116 +90,22 @@ class Auswertung
         return $result;
     }
 
-    /** @author Marcel Bitschi */
-    public function setWochenUmsaetze($connection, $kalenderWochen)
+    /** 
+     * Stored Procedure zur Berechnung der Standardabweichung der Umsätze pro Woche.
+     * @author Marcel Bitschi
+     */
+    public function berechne_standardabweichung(): array
     {
-        $marktid = $this->marktid;
-        $kategorie = $this->kategorie;
-        $wochenUmsaetze = [];
-        $stmt = $connection->prepare("SELECT SUM(bp.anzahl * g.preis) as Umsatz 
-			from bestellposition bp, getraenk g, bestellung b 
-			where bp.bestellnr = b.bestellnr 
-			AND g.hersteller = bp.hersteller 
-			AND g.getraenkename = bp.getraenkename 
-			AND b.marktid = ?
-			AND g.kategorie like ?
-			AND b.bestelldatum BETWEEN ?
-		    AND ?
-			group by b.bestellnr;");
-        foreach ($kalenderWochen as $key => $value) {
-            $stmt->execute([$marktid, $kategorie, $value['startzeitpunkt'], $value['endzeitpunkt']]);
-
-            $ergebnis = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            $umsatzArray = [];
-            foreach ($ergebnis as $umsatz) {
-                $umsatzArray[] = $umsatz['Umsatz'];
-            }
-            $wochenUmsaetze[$key] = $umsatzArray;
-        }
-        return $wochenUmsaetze;
-    }
-
-    /** @author Marcel Bitschi */
-    public function getWochenumsatz()
-    {
-        $kalenderWochen = $this->kalenderWochen;
-        $umsaetze = $this->wochenUmsaetze;
-        $this->wochenUmsatzSummen = $this->umsatzSummenBerechnen($kalenderWochen, $umsaetze);
-        return $this->wochenUmsatzSummen;
-    }
-
-    /** @author Marcel Bitschi */
-    private function umsatzSummenBerechnen($kalenderWochen, $umsaetze)
-    {
-        $wochenUmsatzSummen = [];
-        foreach ($kalenderWochen as $key => $value) {
-            $umsatzsumme = 0;
-            if (count($umsaetze[$key])) {
-                foreach ($umsaetze[$key] as $umsatz) {
-                    $umsatzsumme += $umsatz;
-                }
-            }
-            $wochenUmsatzSummen[$key] = $umsatzsumme;
-        }
-
-        return $wochenUmsatzSummen;
-    }
-
-    /** @author Marcel Bitschi */
-    public function getStandardabweichung() :array
-    {
-        return $this->standardabweichungen;
-    }
-
-    /** @author Marcel Bitschi */
-    private function berechne_standardabweichung()
-    {
-        $standardabweichungen = [];
-        foreach ($this->gesamtumsatz as $row) {
-            $standardabweichung = 0;
-            $umsatzsumme = 0;
-            $umsatzQuadratsumme = 0;
-            if (count($this->gesamtumsatz)) {
-                $count = count($this->gesamtumsatz);
-                foreach ($this->gesamtumsatz as $umsatz) {
-                    $umsatzsumme = $umsatzsumme + $umsatz['total'];
-                    $umsatzQuadratsumme = $umsatzQuadratsumme + $umsatz['total'] ** 2;
-                }
-
-                $arithmetischesMittel = $umsatzsumme / $count;
-
-                $varianz = 1 / $count * $umsatzQuadratsumme - ($arithmetischesMittel ** 2);
-                $standardabweichung = sqrt($varianz);
-            }
-            $standardabweichungen = $standardabweichung;
-        }
-        // var_dump($standardabweichungen);
-        return $standardabweichungen;
-    }
-
-    /** @author Marcel Bitschi */
-    private function setKalenderWochen($startdatum)
-    {
-        date_default_timezone_set('Europe/Berlin');
-        $startzeitpunkt = $startdatum;
-
-        $kalenderWochen = [];
-        do {
-            $kw = date("W Y", $startzeitpunkt);
-            $endzeitpunkt = $this->letzterWochentag($startzeitpunkt);
-            $startzeitpunkt_formatiert = date("Y-m-d H:i:s", $startzeitpunkt);
-            $endzeitpunkt_formatiert = date("Y-m-d H:i:s", $endzeitpunkt);
-
-
-            $kalenderWochen[$kw]['startzeitpunkt'] = $startzeitpunkt_formatiert;
-            $kalenderWochen[$kw]['endzeitpunkt'] = $endzeitpunkt_formatiert;
-
-
-            $startzeitpunkt = $endzeitpunkt + 1;
-            $endzeitpunkt = $this->letzterWochentag($startzeitpunkt);
-        } while ($startzeitpunkt < time());
-
-        return $kalenderWochen;
+        include "db.inc.php";
+        $query = $db->prepare("call sp_standardabweichung(:kategorie, :startdatum, :marktid); ");
+        $query->execute([
+            'kategorie' => $this->kategorie,
+            'startdatum' => $this->startdatum,
+            "marktid" => $this->marktid
+        ]);
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+        
+        return $result;
     }
 
     function calculateKennzahlen(string $start_datum, string $kategorie)
@@ -232,6 +138,15 @@ class Auswertung
     function getMedian(): array
     {
         return $this->median;
+    }
+
+    /**
+     * Getter für das Ergebnis der Berechnung der Standardabweichung.
+     * @author Marcel Bitschi
+     */
+    function getStandardabweichung(): array
+    {
+        return $this->standardabweichungen;
     }
 
 
