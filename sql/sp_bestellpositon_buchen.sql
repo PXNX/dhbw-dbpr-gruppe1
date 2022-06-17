@@ -1,3 +1,9 @@
+/*
+@author Patricia Schäle
+
+Allgemeine Erläuterung:
+Stored Procedure dient dazu die Bestellpositionen der Kundenbestellung anzulegen
+*/
 DELIMITER $$
 CREATE
     DEFINER = `root`@`localhost` PROCEDURE `bestellposition_buchen`(IN `p_bestellnr` INT(11),

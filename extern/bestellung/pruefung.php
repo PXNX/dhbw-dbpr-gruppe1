@@ -45,7 +45,8 @@ function sum_amounts($pos, $getraenk): array
 }
 
 /**
- * Gewünschte Anzahl der Getränke mit vorhandenen Lagerbeständen abgleichen
+ * Gewünschte Anzahl der Getränke mit vorhandenen Lagerbeständen abgleichen. Für jede Position mit zu geringem
+ * Lagerbestand Fehler ausgeben.
  * @author Felix Huber
  */
 function check_amounts($getraenk, array $sumgetraenk): bool

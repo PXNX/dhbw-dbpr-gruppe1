@@ -27,9 +27,6 @@ include '../common/db.inc.php';
     <select id="extern-marktid" name="extern-marktid">
         <?php
 
-        // Warum nochmals common genau hier?
-        // Was bringt das common genau (Verbindung zur Datenbank?)
-
         //Datenbankabfrage die alle Märkte ausliest. Ergebnisse werden in dem Array $markt abgelegt
         //PDOStatement::fetchAll gibt alle Zeilen aus der Ergebnismenge zurück. Der Parameter PDO::FETCH_ASSOC weist PDO an, das Ergebnis als assoziatives Array zurückzugeben. Die Array-Schlüssel entsprechen Ihren Spaltennamen.
         $statement = $db->query("SELECT * FROM markt");

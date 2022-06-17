@@ -17,7 +17,7 @@ class Auswertung
     /** @author Felix Huber */
     public function __construct($marktid, $startdatum, $kategorie)
     {
-        $this->gesamtumsatz = 0.0;
+        $this->gesamtumsatz = berechne_gesamtumsatz($marktid, $startdatum, $kategorie);
         $this->bestellung = 0.0;
         $this->standardabweichungen = 0.0;
         $this->median = 0.0;

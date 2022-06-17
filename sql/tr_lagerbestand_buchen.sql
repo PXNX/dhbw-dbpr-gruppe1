@@ -1,4 +1,4 @@
-CREATE TRIGGER lagerbestand_buchen
+CREATE TRIGGER tr_lagerbestand_buchen
     AFTER INSERT
     ON bestellposition
     FOR EACH ROW

@@ -8,11 +8,18 @@ include '../common/db.inc.php';
     <meta charset="UTF-8">
     <meta name="author" content="Patricia Schäle">
     <title>Anmeldung Kunde</title>
+    <!-- 
+Allgemeine Erläuterung:
+Reichen die Lagerbestände, werden die Kundendaten erfasst. Hierfür hat der
+Kunde die Wahl, einen vorhandenen Kundenaccount über seine Mail-Adresse und ein Kennwort
+zu nutzen oder einen neuen Kundenaccount anzulegen.-->
 </head>
 <body>
-<h1 style="text-align:center"><p>Anmeldung: Ihre Bestellung ist möglich!!!</p></h1>
-<h3 style="text-align:center"><p>Um die Bestellung durchführen zu können, müssen Sie sich <b>einloggen</b>.
-        Wenn Sie noch kein Kundenkonto haben, <b>registrieren</b> Sie sich bitte zuerst.</p></h3>
+<h1 style="text-align:center">Anmeldung: Ihre Bestellung ist möglich!</h1>
+<p>Um die Bestellung durchführen zu können, müssen Sie sich <b>einloggen</b>.
+        Wenn Sie noch kein Kundenkonto haben, <b>registrieren</b> Sie sich bitte zuerst.</p>
+
+<!-- Formular für E-Mail- und Kennworteingabe -->
 <form method="post" action="login.php">
 
     <label for="mailadresse">E-Mail Adresse:</label>
@@ -35,6 +42,7 @@ if (isset($_POST['mailadresse']) && isset($_POST['kundenkennwort'])) {
 
 }
 
+//Funktion soll prüfen ob Kunde ein Kundenaccount hat
 function kundelogin(string $input_mail, string $input_pass)
 {
     include '../common/db.inc.php';
@@ -43,6 +51,9 @@ function kundelogin(string $input_mail, string $input_pass)
         ':mailadresse' => $input_mail]);
     $correct_pass = $query->fetchAll(PDO::FETCH_COLUMN)[0];
 
+    //Passwortprüfung
+    //Korrekt -> Weiterleitung Bestellabschluss
+    //Inkorrekt -> Meldung
     if (password_verify($input_pass, $correct_pass)) {
         $_SESSION["mailadresse"] = $input_mail;
         header('Location: bestellung/abschluss.php', true, 301);

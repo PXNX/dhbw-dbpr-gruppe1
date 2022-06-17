@@ -37,12 +37,13 @@ include '../../common/db.inc.php';
 
 
         //Bestellpositionen zur Bestellung werden angelegt
-        $bestellnr = $db->lastInsertId();
-        $positionsnr = 1;
+
+        //Bestellnr ist auto inkrement, zuletzt hinzugefügte Bestellnr auslesen
+        //Bestellpositionen zur Bestellung werden angelegt
         foreach ($_SESSION['order'] as $hersteller => $getraenke) {
 
             foreach ($getraenke as $getraenkename => $anzahl) {
-                $query = $db->prepare("CALL bestellposition_buchen(:bestellnr, :positionsnr, :anzahl, :getraenkename, :hersteller);");
+                            $query = $db->prepare("CALL bestellposition_buchen(:bestellnr, :positionsnr, :anzahl, :getraenkename, :hersteller);");
                 $result = $query->execute([
                     ':bestellnr' => $bestellnr,
                     ':positionsnr' => $positionsnr,
@@ -56,7 +57,7 @@ include '../../common/db.inc.php';
         }
 
         echo '<h1>Ihre Bestellung wurde erfolgreich abgeschlossen!</h1><a href="../index.php">Neue Bestellung anlegen</a>';
-    } else {
+        //Bei erfolgreichen anlegen der Bestellung kommt Erfolgsmeldung und die Möglichkeit eine neue Bestellung anzugelegen    } else {
 
         echo "Bestellung, MarkId oder Mail wurden nicht gesetzt.";
     }
