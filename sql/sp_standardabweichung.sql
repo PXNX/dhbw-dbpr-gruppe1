@@ -1,7 +1,8 @@
 -- @author Marcel Bitschi
 -- Stored Procedure zur Berechnung der Standardabweichung
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_standardabweichung`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
+CREATE
+    DEFINER = `root`@`localhost` PROCEDURE `sp_standardabweichung`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
 begin
 
     declare start_date date default p_start_date;
@@ -19,8 +20,23 @@ begin
     l1:
     while start_date <= current_date
         do
-        -- ermitteln von x strich
-         set avg_value := (SELECT AVG(half.total)
+            -- ermitteln von x strich
+            set avg_value := (SELECT AVG(half.total)
+                              FROM (SELECT sum(g.preis * p.anzahl) as total
+                                    from bestellposition p,
+                                         bestellung b,
+                                         getraenk g
+                                    where b.marktid = p_marktid
+                                      and p.bestellnr = b.bestellnr
+                                      and p.getraenkename = g.getraenkename
+                                      and p.hersteller = g.hersteller
+                                      and g.kategorie LIKE coalesce(p_kategorie, '%')
+                                      and b.bestelldatum between start_date and end_date
+                                    group by p.bestellnr) as half);
+
+            insert into temp_res
+                -- aufsummieren der quadrierten subtraktionen
+            SELECT start_date, sum(power(half.total - avg_value, 2)) / count(*) as standarddeviation
             FROM (SELECT sum(g.preis * p.anzahl) as total
                   from bestellposition p,
                        bestellung b,
@@ -29,25 +45,11 @@ begin
                     and p.bestellnr = b.bestellnr
                     and p.getraenkename = g.getraenkename
                     and p.hersteller = g.hersteller
-                    and g.kategorie LIKE coalesce(p_kategorie,'%')
+                    and g.kategorie LIKE coalesce(p_kategorie, '%')
                     and b.bestelldatum between start_date and end_date
-                  group by p.bestellnr ) as half);
+                  group by p.bestellnr) as half;
 
-     insert into temp_res
-     -- aufsummieren der quadrierten subtraktionen
-    SELECT start_date, sum(power(half.total - avg_value, 2))/count(*) as standarddeviation
-    FROM (SELECT sum(g.preis * p.anzahl) as total
-                  from bestellposition p,
-                       bestellung b,
-                       getraenk g
-                  where b.marktid = p_marktid
-                    and p.bestellnr = b.bestellnr
-                    and p.getraenkename = g.getraenkename
-                    and p.hersteller = g.hersteller
-                    and g.kategorie LIKE coalesce(p_kategorie,'%')
-                    and b.bestelldatum between start_date and end_date group by p.bestellnr) as half;
-
-                  set start_date = end_date;
+            set start_date = end_date;
             set end_date = date_add(end_date, interval 1 week);
 
         end while l1;
@@ -55,5 +57,5 @@ begin
 
     select * from temp_res;
 
-    end$$
+end$$
 DELIMITER ;

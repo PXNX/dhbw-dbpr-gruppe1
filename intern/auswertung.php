@@ -21,29 +21,28 @@ include '../common/db.inc.php';
 <form method="post" action="auswertung.php">
 
     <label for="kategorie"><b>Kategorie:</b></label>
-        <select id="kategorie" name="kategorie">
-            <option value="">Alle Kategorien</option>
-            <option value="wasser">Wasser</option>
-            <option value="saft">Saft</option>
-            <option value="limonade">Limonade</option>
-            <option value="wein">Wein</option>
-            <option value="bier">Bier</option>
-            <option value="sonstiges">Sonstiges</option>
-        </select>
+    <select id="kategorie" name="kategorie">
+        <option value="">Alle Kategorien</option>
+        <option value="wasser">Wasser</option>
+        <option value="saft">Saft</option>
+        <option value="limonade">Limonade</option>
+        <option value="wein">Wein</option>
+        <option value="bier">Bier</option>
+        <option value="sonstiges">Sonstiges</option>
+    </select>
 
     <br><br>
 
     <label for="startdatum"><b>Startdatum:</b></label>
     <?php
     $curr_date = date("Y-m-d");
-    echo("<input type='date' id='startdatum' name='startdatum' max='$curr_date' required>");
+    echo("<input type='date' id='startdatum' name='startdatum' max='$curr_date'  required>");
     ?>
     <br><br>
 
     <input id="market-auswertung" type="submit" value="Auswertungen erzeugen">
 </form>
 <br><br>
-
 
 
 <?php
@@ -61,50 +60,60 @@ if (isset($_POST["startdatum"]) && isset($_POST["kategorie"])) {
 
     // Ergebnisse jeweils als einzelne Tabellen ausgeben. In der ersten Spalte steht bei Kalenderwoche noch das Jahr dabei, da sich der Zeitraum
     //ja durchaus über mehrere Jahre hinweg erstrecken könnte.
-    echo"<table>
+    echo "<table>
     <tr>
         <td><b>KW (Jahr)</b></td>
         <td><b>Gesamtumsatz der Woche (in EUR)</b></td>
     </tr>";
     $gesamtumsatz = $auswertung->getGesamtumsatz();
-    foreach ($gesamtumsatz as  $row){
-        echo "<tr><td>". date("W (Y)",strtotime($row["start_date"])) . "</td><td>" . $row["total"] . "</td></tr>";
+    foreach ($gesamtumsatz as $row) {
+        echo "<tr><td>" . date("W (Y)", strtotime($row["start_date"])) . "</td><td>" . $row["total"] . "</td></tr>";
     }
     echo "</table><br><hr>";
 
-    echo"<table>
+    echo "<table>
     <tr>
         <td><b>KW (Jahr)</td>
         <td><b>größte Bestellung der Woche (in EUR)</b></td>
     </tr>";
     $groesste = $auswertung->getGroesste();
-    foreach ($groesste as $row){
-        echo "<tr><td>". date("W (Y)",strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
+    foreach ($groesste as $row) {
+        echo "<tr><td>" . date("W (Y)", strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
     }
     echo "</table><br><hr>";
 
-    echo"<table>
+    echo "<table>
     <tr>
         <td><b>KW (Jahr)</b></td>
         <td><b>Median der Bestellungen der Woche (in EUR)</b></td>
     </tr>";
     $median = $auswertung->getMedian();
-    foreach ($median as $row){
-        echo "<tr><td>". date("W (Y)",strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
+    foreach ($median as $row) {
+        echo "<tr><td>" . date("W (Y)", strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
     }
     echo "</table><br><hr>";
 
     $standardabweichung = $auswertung->getStandardabweichung();
-
-    echo"<table>
+    echo "<table>
     <tr>
         <td><b>KW (Jahr)</b></td>
         <td><b>Standardabweichung der Bestellungen der Woche (in EUR)</b></td>
     </tr>";
-    foreach ($standardabweichung as $row){
-        echo "<tr><td>". date("W (Y)",strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
+    foreach ($standardabweichung as $row) {
+        echo "<tr><td>" . date("W (Y)", strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
     }
     echo "</table><br><hr>";
+
+    $lineare_regression = $auswertung->getLineareRegression();
+    echo "<table>
+    <tr>
+        <td><b>KW</b></td>
+        <td><b>Vorhersage</b></td>
+    </tr>";
+    foreach ($lineare_regression as $kw => $vorhersage) {
+        echo "<tr><td>" . $kw . "</td><td>" . $vorhersage . "</td></tr>";
+    }
+    echo "</table>";
 
 
 }

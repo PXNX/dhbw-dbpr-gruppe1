@@ -8,9 +8,8 @@ include '../common/db.inc.php';
     <meta charset="UTF-8">
     <meta name="author" content="Marcel Bitschi">
     <title>Getränkeerfassung</title>
-    <!--
-      Hier können Getränke mit ihrem Namen, einem Preis, dem Hersteller und der zugehörigen Kategorie gespeichert werden.
--->
+    <!-- Allgemeine Erläuterung:
+      Hier können Getränke mit ihrem Namen, einem Preis, dem Hersteller und der zugehörigen Kategorie gespeichert werden.-->
 </head>
 <body>
 
@@ -18,6 +17,7 @@ include '../common/db.inc.php';
 
 <form method="post" action="getraenk.php">
     <table>
+        <thead>
 
         <!-- Eingabefeld Getränkename-->
         <tr>
@@ -54,6 +54,9 @@ include '../common/db.inc.php';
             <input type="submit" value="erfassen"/>
 
         </form>
+        </thead>
+        <tbody>
+
         <?php
 
         // Überprüfung, ob alle Werte eingetragen sind, dann Einfügen des Getränks in die DB
@@ -66,19 +69,20 @@ include '../common/db.inc.php';
 
             try {
                 $query = $db->prepare("INSERT into getraenk (getraenkename,hersteller,preis,kategorie) values(:getraenkename,:hersteller,:preis,:kategorie);");
-         $result =   $query->execute(['getraenkename' => $getraenkename,
-               'hersteller' => $hersteller,
-                               'preis' => $preis,
-               'kategorie' => $kategorie]);
-            if($result){
-               echo 'Das Getränk wurde erfolgreich angelegt.';
-            }
+                $result = $query->execute(['getraenkename' => $getraenkename,
+                    'hersteller' => $hersteller,
+                    'preis' => $preis,
+                    'kategorie' => $kategorie]);
+                if ($result) {
+                    echo 'Das Getränk wurde erfolgreich angelegt.';
+                }
             } catch (Exception $e) {
                 echo 'Es ist ein Fehler aufgetreten! Bitte die Werte überprüfen und erneut versuchen.';
             }
-            
+
         }
         ?>
+        </tbody>
     </table>
 </body>
 </html>

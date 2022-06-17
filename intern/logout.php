@@ -1,6 +1,7 @@
 <?php
 /**
- * Durch Zerstören der Session geht die dort gespeicherte <code>marktid</code> verloren. Man muss sich event einloggen.
+ * Durch Zerstören der Session geht die dort gespeicherte <code>marktid</code> verloren. Man muss sich damm wieder neu
+ * einloggen.
  * @author Felix Huber
  */
 session_destroy();

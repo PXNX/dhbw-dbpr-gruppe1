@@ -32,7 +32,7 @@ function bestellung_anlegen(): int
             'mailadresse' => $_SESSION['mailadresse']
         ]);
         if ($result) {
-            return $db->last_insert_id();
+            return $db->lastInsertId();
         }
     } catch (Exception $e) {
         echo "Anlegen der Bestellung war fehlerhaft.";
@@ -44,7 +44,6 @@ function bestellung_anlegen(): int
 if (isset($_SESSION['order']) && isset($_SESSION['extern-marktid']) && isset($_SESSION['mailadresse'])) {
 
     $bestellnr = bestellung_anlegen();
-
 
     $positionsnr = 1;
     $fehler_aufgetreten = false;

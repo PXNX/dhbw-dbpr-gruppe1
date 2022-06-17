@@ -47,7 +47,7 @@ function kundelogin(string $input_mail, string $input_pass)
 {
     try {
         include '../common/db.inc.php';
-        $query = $db->prepare("SELECT kundenkennwort from kunde where mailadresse= :mailadresse");
+        $query = $db->prepare("SELECT kundenkennwort FROM kunde WHERE mailadresse= :mailadresse");
         $query->execute([
             'mailadresse' => $input_mail]);
         $correct_pass = $query->fetchAll(PDO::FETCH_COLUMN)[0];
@@ -60,7 +60,7 @@ function kundelogin(string $input_mail, string $input_pass)
             header('Location: bestellung/abschluss.php', true, 301);
             exit();
         } else {
-        echo "Kennwort ist inkorrekt.";
+            echo "Kennwort ist inkorrekt.";
         }
     } catch (Exception $e) {
         echo 'Login fehlgeschlagen.';

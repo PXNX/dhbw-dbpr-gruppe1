@@ -1,6 +1,7 @@
 -- @author Felix Huber
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_groesste`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
+CREATE
+    DEFINER = `root`@`localhost` PROCEDURE `sp_groesste`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
 begin
 
     declare start_date date default p_start_date;
@@ -22,8 +23,10 @@ begin
 
 
             insert into temp_res
-            -- höchsten Umsatz mit bestellnr (eigentlich optional) und Startdatum der Woche
-            SELECT start_date, bestellnr, max(half.total)
+                -- höchsten Umsatz mit bestellnr (eigentlich optional) und Startdatum der Woche
+            SELECT start_date,
+                   bestellnr,
+                   max(half.total)
                    -- die Umsätze einer Woche nehmen
             FROM (SELECT b.bestellnr, sum(g.preis * p.anzahl) as total
                   from bestellposition p,
@@ -33,7 +36,7 @@ begin
                     and p.bestellnr = b.bestellnr
                     and p.getraenkename = g.getraenkename
                     and p.hersteller = g.hersteller
-                    and g.kategorie LIKE coalesce(p_kategorie,'%')
+                    and g.kategorie LIKE coalesce(p_kategorie, '%')
                     and b.bestelldatum between start_date and end_date
                   group by p.bestellnr
                   order by total) as half;

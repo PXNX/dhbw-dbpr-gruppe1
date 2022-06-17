@@ -1,6 +1,7 @@
 -- @author Felix Huber
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_median`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
+CREATE
+    DEFINER = `root`@`localhost` PROCEDURE `sp_median`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
 begin
 
     declare start_date date default p_start_date;
@@ -22,7 +23,7 @@ begin
     while start_date <= current_date
         do
 
-        -- Anzahl der Umsätze je Woche halbieren und aufrunden wie von Herr Jeske beigebracht
+            -- Anzahl der Umsätze je Woche halbieren und aufrunden wie von Herr Jeske beigebracht
             set entry_amount := (SELECT CEIL(COUNT(*) / 2)
 
                                  FROM bestellposition p,
@@ -33,12 +34,14 @@ begin
                                    and p.getraenkename = g.getraenkename
                                    and p.hersteller = g.hersteller
                                    and b.bestelldatum between start_date and end_date
-                                   and g.kategorie LIKE coalesce(p_kategorie,'%'));
+                                   and g.kategorie LIKE coalesce(p_kategorie, '%'));
 
             insert into temp_res
-            -- der höchste Umsatz ist hierbei Median
-            SELECT start_date, bestellnr, max(half.total)
-            -- die Hälfte der geordneten Umsätze einer Woche nehmen
+                -- der höchste Umsatz ist hierbei Median
+            SELECT start_date,
+                   bestellnr,
+                   max(half.total)
+                   -- die Hälfte der geordneten Umsätze einer Woche nehmen
             FROM (SELECT b.bestellnr, sum(g.preis * p.anzahl) as total
                   from bestellposition p,
                        bestellung b,
@@ -47,7 +50,7 @@ begin
                     and p.bestellnr = b.bestellnr
                     and p.getraenkename = g.getraenkename
                     and p.hersteller = g.hersteller
-                    and g.kategorie LIKE coalesce(p_kategorie,'%')
+                    and g.kategorie LIKE coalesce(p_kategorie, '%')
                     and b.bestelldatum between start_date and end_date
                   group by p.bestellnr
                   order by total

@@ -26,32 +26,29 @@ include '../common/db.inc.php';
     <label for="extern-marktid"><b>Markt:</b></label>
     <select id="extern-marktid" name="extern-marktid">
         <?php
-        try{
-        //Datenbankabfrage die alle Märkte ausliest. Ergebnisse werden in dem Array <code>markt</code> abgelegt
-        $statement = $db->query("SELECT * FROM markt");
-        $statement->execute([]);
-        $markt = $statement->fetchAll(PDO::FETCH_ASSOC);
+        try {
+            //Datenbankabfrage die alle Märkte ausliest. Ergebnisse werden in dem Array <code>markt</code> abgelegt
+            $statement = $db->query("SELECT * FROM markt");
+            $statement->execute([]);
+            $markt = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        //Foreach Schleife legt die <code>marktid</code> jedes in dem Array <code>markt</code> abgelegten Datensatzes in ein <code>marktid</code> Array
-        foreach ($markt as $row) {
-            $marktid = $row["marktid"];
-            echo '<option value="' . $marktid . '">' . $marktid . ' - ' . $row["marktname"] . '</option>';
-        }
-    }catch(Exception $e){
-        echo'Es ist ein Fehler aufgetreten.
+            //Foreach Schleife legt die <code>marktid</code> jedes in dem Array <code>markt</code> abgelegten Datensatzes in ein <code>marktid</code> Array
+            foreach ($markt as $row) {
+                $marktid = $row["marktid"];
+                echo '<option value="' . $marktid . '">' . $marktid . ' - ' . $row["marktname"] . '</option>';
+            }
+        } catch (Exception $e) {
+            echo 'Es ist ein Fehler aufgetreten.
         Versuchen Sie es noch einmal oder rufen Sie den Support an.';
-    }
+        }
         ?>
     </select>
-
+    <br>
     <!-- Eingabefeld für die Anzahl der Bestellpositionen. Eingabe erlaubt nur ganze Zahlen >= 1 -->
-    <table>
-        <tr>
-            <td><label for="positionsnr"><b>Anzahl Bestellpositionen:</b></label></td>
-            <td><input type="number" min="1" name="positionsnr" size="40"
-                       value='<?php echo $_SESSION['positionsnr']; ?>' required/><br></td>
-        </tr>
-    </table><code></code>
+    <label for="positionsnr"><b>Anzahl Bestellpositionen:</b></label></td>
+    <input type="number" min="1" name="positionsnr" size="40"
+           value='<?php echo $_SESSION['positionsnr']; ?>' required/><br></td>
+    <code></code>
     <br>
     <!-- Daten werden an bestellung_erfassen.php übertragen --->
     <button type="submit" name="erfassen">Erfassungsformular erstellen</button>

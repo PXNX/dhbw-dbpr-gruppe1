@@ -45,7 +45,7 @@ if (isset($_POST['marktid']) && isset($_POST['marktkennwort'])) {
 function login($marktid, $marktkennwort)
 {
     include '../common/db.inc.php';
-    $query = $db->prepare("SELECT marktkennwort from markt where marktid=:marktid");
+    $query = $db->prepare("SELECT marktkennwort FROM markt WHERE marktid=:marktid");
     $query->execute(['marktid' => $marktid]);
     $correct_pass = $query->fetchAll(PDO::FETCH_COLUMN)[0];
 

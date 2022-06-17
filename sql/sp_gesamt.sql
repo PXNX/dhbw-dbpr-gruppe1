@@ -1,6 +1,7 @@
 -- @author Felix Huber
 DELIMITER $$
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_gesamt`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
+CREATE
+    DEFINER = `root`@`localhost` PROCEDURE `sp_gesamt`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
 begin
 
 
@@ -21,8 +22,9 @@ begin
         do
 
             insert into temp_res
-            -- aufsummieren der Umsätze
-            Select start_date, sum(einzel_umsatz.total)
+                -- aufsummieren der Umsätze
+            Select start_date,
+                   sum(einzel_umsatz.total)
                    -- die Umsätze einer Woche nehmen
             from (SELECT g.preis * p.anzahl as total
                   from bestellposition p,
@@ -32,7 +34,7 @@ begin
                     and p.bestellnr = b.bestellnr
                     and p.getraenkename = g.getraenkename
                     and p.hersteller = g.hersteller
-                    and g.kategorie LIKE coalesce(p_kategorie,'%')
+                    and g.kategorie LIKE coalesce(p_kategorie, '%')
                     and b.bestelldatum between start_date and end_date) as einzel_umsatz;
 
             -- eine Woche in die Zukunft schreiten

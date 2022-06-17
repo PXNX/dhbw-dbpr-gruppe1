@@ -63,7 +63,7 @@ if (isset($_POST['marktid']) && isset($_POST['marktname']) && isset($_POST['mark
             header('Location: index.php', true, 301);
             exit();
         }
-    }catch (Exception $e){
+    } catch (Exception $e) {
         echo 'Registrierung war fehlerhaft.';
     }
 

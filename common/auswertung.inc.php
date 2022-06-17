@@ -10,11 +10,9 @@ class Auswertung
     private $startdatum;
     private $kategorie;
     private $marktid;
-    // private $kalenderWochen;
-    // private $betrachtungszeitraumRegression;
-    // private $wochenUmsaetze;
-    // private $standardabweichungen;
-    // private $umsatzFolgewoche;
+    private $standardabweichung;
+    private $median;
+    private $lineare_regression;
 
 
     /**
@@ -29,15 +27,16 @@ class Auswertung
 
         $this->gesamtumsatz = $this->berechne_gesamtumsatz();
         $this->groesste = $this->berechne_groesste();
-        $this->standardabweichungen = $this->berechne_standardabweichung();
+        $this->standardabweichung = $this->berechne_standardabweichung();
         $this->median = $this->berechne_median();
+        $this->lineare_regression = $this->berechne_lineare_regression();
     }
 
     /**
      * Stored Procedure zur Berechnung des Gesamtumsatzes je Woche aufrufen.
      * @author Felix Huber
      */
-    public function berechne_gesamtumsatz(): array
+    private function berechne_gesamtumsatz(): array
     {
         include 'db.inc.php';
         $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid);");
@@ -56,7 +55,7 @@ class Auswertung
      * Stored Procedure zur Berechnung des Umsatzes der größten Bestellung je Woche aufrufen.
      * @author Felix Huber
      */
-    public function berechne_groesste(): array
+    private function berechne_groesste(): array
     {
         include "db.inc.php";
         $query = $db->prepare("call sp_groesste(:kategorie, :startdatum, :marktid); ");
@@ -72,10 +71,28 @@ class Auswertung
     }
 
     /**
+     * Stored Procedure zur Berechnung der Standardabweichung der Umsätze pro Woche.
+     * @author Marcel Bitschi
+     */
+    private function berechne_standardabweichung(): array
+    {
+        include "db.inc.php";
+        $query = $db->prepare("call sp_standardabweichung(:kategorie, :startdatum, :marktid); ");
+        $query->execute([
+            'kategorie' => $this->kategorie,
+            'startdatum' => $this->startdatum,
+            "marktid" => $this->marktid
+        ]);
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        return $result;
+    }
+
+    /**
      * Stored Procedure zur Berechnung des Medians aller Umsätze je Woche aufrufen.
      * @author Felix Huber
      */
-    public function berechne_median(): array
+    private function berechne_median(): array
     {
         include "db.inc.php";
         $query = $db->prepare("call sp_median(:kategorie, :startdatum, :marktid); ");
@@ -90,26 +107,57 @@ class Auswertung
         return $result;
     }
 
-    /** 
-     * Stored Procedure zur Berechnung der Standardabweichung der Umsätze pro Woche.
-     * @author Marcel Bitschi
+    /**
+     *  Regressionsfunktion soll für aktuelle und folgende Woche Umsatz vorhersagen.
+     * @author Patricia Schäle
      */
-    public function berechne_standardabweichung(): array
+    function berechne_lineare_regression(): array
     {
-        include "db.inc.php";
-        $query = $db->prepare("call sp_standardabweichung(:kategorie, :startdatum, :marktid); ");
-        $query->execute([
-            'kategorie' => $this->kategorie,
-            'startdatum' => $this->startdatum,
-            "marktid" => $this->marktid
-        ]);
-        $result = $query->fetchAll(PDO::FETCH_ASSOC);
-        
-        return $result;
-    }
+        foreach ($this->getGesamtumsatz() as $row) {
+            $daten[] = date('W', strtotime($row["start_date"]));
+            $umsaetze[] = $row["total"];
+        }
 
-    function calculateKennzahlen(string $start_datum, string $kategorie)
-    {
+        $xWerte = $daten;
+        $yWerte = $umsaetze;
+
+        if (count($xWerte) !== count($yWerte)) {
+            echo 'Es ist ein Fehler aufgetreten.';
+        }
+
+        //Summen berechnen
+        $summe_x = 0;
+        $summe_y = 0;
+        $summe_xx = 0;
+        $summe_xy = 0;
+
+        $count = count($xWerte);
+        for ($i = 0; $i < $count; $i++) {
+            $summe_x += $xWerte[$i];
+            $summe_y += $yWerte[$i];
+            $summe_xx += $xWerte[$i] * $xWerte[$i];
+            $summe_xy += $xWerte[$i] * $yWerte[$i];
+        }
+
+        //Steigung and achsenabschnitt(Verschiebung)
+        // n = Anzahl
+        // S = Summe
+        //steigung = (nSxy - SxSy) / (nSxx - SxSx)
+        $steigung = ($count * $summe_xy - $summe_x * $summe_y) / ($count * $summe_xx - $summe_x * $summe_x);
+
+        //Achsenabschnitt
+        $achsenabschnitt = ($summe_y / $count) - ($steigung * $summe_x) / $count;
+
+        $dieseWoche = date('W');
+        $vorhersage1 = (($dieseWoche * $steigung) + $achsenabschnitt);
+        $naechsteWoche = date('W', strtotime('+1 week'));
+        $vorhersage2 = (($naechsteWoche * $steigung) + $achsenabschnitt);
+        var_dump($vorhersage2);
+
+        return [
+            $dieseWoche => number_format($vorhersage1, 2, '.', ','),
+            $naechsteWoche => number_format($vorhersage2, 2, '.', ','),
+        ];
 
     }
 
@@ -146,82 +194,15 @@ class Auswertung
      */
     function getStandardabweichung(): array
     {
-        return $this->standardabweichungen;
+        return $this->standardabweichung;
     }
 
-
-    /*
-      //Regressionsfunktion
-      //Eingabe soll für aktuelle und folgende Woche Umsatz vorhersagen
-      function regression($x)
-      {
-          $aktuellesDatum=$x;
-          $kw = date("W", $aktuellesDatum);
-          $kw2 = $kw -> addWeek(1);
-
-          //Daten x Werte (Zeitwerte)
-          foreach($kalenderWochen as $key => $woche){
-              $xWerte[] = $woche[$key];
-          }
-
-          //Daten y Werte
-          foreach($wochenUmsaetze as $u){
-              $yWerte[] = $u;
-          }
-
-          //Mittelwert x und y Werte
-          $xMittelwert = arithmetischesMittel($xWerte[]);
-          $yMittelwert = arithmetischesMittel($yWerte[]);
-
-          //Abweichung von x und y vom Mittelwert
-          $xAbweichung[] = $xWerte[] - $xMittelwert;
-          $yAbweichung[] = $yWerte[] - $yMittelwert;
-
-          //Quadrierte Abweichung von x
-          $xQuadriert[] = pow($xAbweichung, 2);
-
-          //Abweichung x * Abweichung y -> (xi - ∅x) × (yi - ∅y)
-          $xyAbweichung[] = $xAbweichung[] * $yAbweichung[];
-
-          //Steigung berechnen -> Nun wird die Summe der multiplizierten Abweichungen
-          //durch die Summe der quadrierten Abweichungen von x geteilt -> β = ∑ [(xi - ∅x) × (yi - ∅y)] / ∑(xi - ∅x)2
-
-          foreach($xQuadriert as $quad){
-              $sumQuadriert += $quad;
-          }
-
-          foreach($xyAbweichung as $xyab){
-              $sumAbweichung += $xyab;
-          }
-
-          $steigung = $sumQuadriert / $sumAbweichung;
-
-          //Achsenabschnitt berechnen -> α = ∅y - β × ∅x
-          $achsenabschnitt = $yMittelwert - $yMittelwert*$xMittelwert;
-
-
-          //Regressionsgerade -> yi = α + β × xi
-          $umsatz = $achsenabschnitt + ($x * $steigung);
-
-          //Regression Folgewoche
-          $umsatz2 = $achsenabschnitt + ($x * $steigung);
-
-          return  echo' '$umsatz' '$umsatz2'';
-
-      }
-  */
-
-
-    /** @author Patricia Schäle */
-    function arithmetischesMittel($werte)
+    /**
+     * Getter für das Ergebnis der Berechnung der linearen Regression.
+     * @author Marcel Bitschi
+     */
+    function getLineareRegression(): array
     {
-        if (count($werte)) {
-            $count = count($werte);
-            foreach ($werte as $w) {
-                $summe += $w;
-            }
-            return $arithmetischesMittel = $summe / $count;
-        }
+        return $this->lineare_regression;
     }
-
 }
