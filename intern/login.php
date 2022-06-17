@@ -60,7 +60,7 @@ function login($marktid, $marktkennwort)
         exit();
 
     } else {
-        echo '<h1>Passwort ist inkorrekt.</h1>';
+        echo 'Passwort ist inkorrekt.';
     }
 
 }

@@ -10,7 +10,7 @@ include '../common/db.inc.php';
     <title>Anmeldung Kunde</title>
     <!-- 
 Allgemeine Erläuterung:
-Reichen die Lagerbestände, werden die Kundendaten erfasst. Hierfür hat der
+Reichen die Lagerbestände werden die Kundendaten erfasst. Hierfür hat der
 Kunde die Wahl, einen vorhandenen Kundenaccount über seine Mail-Adresse und ein Kennwort
 zu nutzen oder einen neuen Kundenaccount anzulegen.-->
 </head>
@@ -60,7 +60,7 @@ function kundelogin(string $input_mail, string $input_pass)
             header('Location: bestellung/abschluss.php', true, 301);
             exit();
         } else {
-        echo "Kennwort ist inkorrekt.</h1>");
+        echo "Kennwort ist inkorrekt.";
         }
     } catch (Exception $e) {
         echo 'Login fehlgeschlagen.';

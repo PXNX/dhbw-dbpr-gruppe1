@@ -29,7 +29,7 @@ class Auswertung
 
         $this->gesamtumsatz = $this->berechne_gesamtumsatz();
         $this->groesste = $this->berechne_groesste();
-        $this->standardabweichungen = $this->berechne_standardabweichung(array(),array());
+        $this->standardabweichungen = $this->berechne_standardabweichung();
         $this->median = $this->berechne_median();
     }
 
@@ -39,12 +39,12 @@ class Auswertung
      */
     public function berechne_gesamtumsatz(): array
     {
-        include "db.inc.php";
-        $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid); ");
+        include 'db.inc.php';
+        $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid);");
         $query->execute([
             'kategorie' => $this->kategorie,
             'startdatum' => $this->startdatum,
-            "marktid" => $this->marktid
+            'marktid' => $this->marktid
         ]);
         $result = $query->fetchAll(PDO::FETCH_ASSOC);
 
@@ -119,11 +119,6 @@ class Auswertung
         return $wochenUmsaetze;
     }
 
-    public function getWochen()
-    {
-        return $this->kalenderWochen;
-    }
-
     /** @author Marcel Bitschi */
     public function getWochenumsatz()
     {
@@ -151,27 +146,24 @@ class Auswertung
     }
 
     /** @author Marcel Bitschi */
-    public function getStandardabweichung()
+    public function getStandardabweichung() :array
     {
-        $kalenderWochen = $this->kalenderWochen;
-        $umsaetze = $this->wochenUmsaetze;
-        $this->standardabweichungen = $this->berechne_standardabweichung($kalenderWochen, $umsaetze);
         return $this->standardabweichungen;
     }
 
     /** @author Marcel Bitschi */
-    private function berechne_standardabweichung($startdatum, $kategorie)
+    private function berechne_standardabweichung()
     {
         $standardabweichungen = [];
-        foreach ($this->$startdatum as $key => $value) {
+        foreach ($this->gesamtumsatz as $row) {
             $standardabweichung = 0;
             $umsatzsumme = 0;
             $umsatzQuadratsumme = 0;
-            if (count($kategorie[$key])) {
-                $count = count($kategorie[$key]);
-                foreach ($kategorie[$key] as $umsatz) {
-                    $umsatzsumme += $umsatz;
-                    $umsatzQuadratsumme += $umsatz ** 2;
+            if (count($this->gesamtumsatz)) {
+                $count = count($this->gesamtumsatz);
+                foreach ($this->gesamtumsatz as $umsatz) {
+                    $umsatzsumme = $umsatzsumme + $umsatz['total'];
+                    $umsatzQuadratsumme = $umsatzQuadratsumme + $umsatz['total'] ** 2;
                 }
 
                 $arithmetischesMittel = $umsatzsumme / $count;
@@ -179,9 +171,9 @@ class Auswertung
                 $varianz = 1 / $count * $umsatzQuadratsumme - ($arithmetischesMittel ** 2);
                 $standardabweichung = sqrt($varianz);
             }
-            $standardabweichungen[$key] = $standardabweichung;
+            $standardabweichungen = $standardabweichung;
         }
-        var_dump($standardabweichungen);
+        // var_dump($standardabweichungen);
         return $standardabweichungen;
     }
 

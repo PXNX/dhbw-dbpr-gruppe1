@@ -8,10 +8,10 @@
 <body>
 
 <?php
+
 $kategorie = 'Limonade';
 $startdatum = '2022-01-01';
 $marktid = 69;
-
 include_once "common/db.inc.php";
     $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid);");
     $query->execute([
@@ -19,33 +19,50 @@ include_once "common/db.inc.php";
         ':startdatum' =>$startdatum,
         ':marktid' =>$marktid,
     ]);
-
 $result = $query->fetchAll();
 
 foreach($result as $row){
-   $daten[]=date('W',strtotime($row["start_date"]));
-   
-    $umseatze[] = $row["total"];
+   $daten[]=date('W', strtotime($row["start_date"]));
+   $umsaetze[] = $row["total"];
 }
 
-//$counter = count($daten);
+echo $result;
 
-//for($c = 1; $c <= $counter; $c++){
-//   $wochen[]= $c;
-//}
+//date('d.m.Y', strtotime('-1 week')); // Jetzt minus 1 Woche, als Datum
+//Startwoche bis vorletzte Woche
+//Startwoche+1 bis letzte Woche
+//$bb_week = date('W') -2;
+//$b_week = date('W') -1;
+//$s_week = date('W', strtotime($startdatum));
 
-//$xArray = $wochen;
-//$yArray = $umseatze;
+//var_dump($bb_week);
+//var_dump($b_week);
+//var_dump($s_week);
+
+/*$count=0;
+
+for($i=$s_week;$i<=$bb_week;$i++){
+    if(in_array($i, $daten)){
+        $count+=$count;
+    }
+}
+
+var_dump($count);*/
+
+$zeitraum = new \DatePeriod($start, $interval,$ende);
+
+foreach ($zeitraum as $date) {
+    echo $date->format('d.m.Y') . '<br>';
+}
+
+
 
 $xArray = $daten;
-$yArray = $umseatze;
+$yArray = $umsaetze;
 
 if(count($xArray)!==count($yArray)){
     echo'Es ist ein Fehler aufgetreten.';
 }
-
-//$xArray = [50,60,70,80,90,100,110,120,130,140,150];
-//$yArray = [7,8,8,9,9,9,10,11,14,14,15];
 
 // Calculate Sums
 $xSum=0; 
@@ -68,19 +85,19 @@ for ($i = 0; $i < $count; $i++) {
 $slope = ($count * $xySum - $xSum * $ySum) / ($count * $xxSum - $xSum * $xSum);
 
 // A = Mittelwert von...
-// b = Ay - (Ax * m)
 $intercept = ($ySum / $count) - ($slope * $xSum) / $count;
 
 $dieseWoche = date('W');
-$vorhersage1=($dieseWoche*$slope);
+$vorhersage1=(($dieseWoche*$slope)+$intercept);
+number_format($vorhersage1,2,'.', ',');
 $nächsteWoche = $dieseWoche+1;
-$vorhersage2 =($nächsteWoche*$slope);
-var_dump($vorhersage1); echo'</br>';
-var_dump($vorhersage2);
+$vorhersage2 =(($nächsteWoche*$slope)+$intercept);
 
-//Bei Auswertung Format anpassen
-//$foo = "105";
-//echo number_format((float)$foo, 2, '.', ''); // Outputs -> 105.00
+//echo number_format($vorhersage1,2,'.',',');
+//echo number_format($vorhersage2,2,'.',',');
+
+
+
 ?>
 </body>
 </html>

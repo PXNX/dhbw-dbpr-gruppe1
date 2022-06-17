@@ -1,8 +1,8 @@
-create procedure sp_median(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
+DELIMITER $$
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_median`(p_kategorie varchar(30), p_start_date date, p_marktid int(11))
 begin
 
     declare start_date date default p_start_date;
-    declare p_kategorie varchar(30) default '%';
     DECLARE entry_amount int;
     declare end_date date default date_add(start_date, interval 1 week);
 
@@ -29,7 +29,7 @@ begin
                                    and p.getraenkename = g.getraenkename
                                    and p.hersteller = g.hersteller
                                    and b.bestelldatum between start_date and end_date
-                                   and g.kategorie LIKE p_kategorie);
+                                   and g.kategorie LIKE coalesce(p_kategorie,'%'));
 
             insert into temp_res
             SELECT start_date, bestellnr, max(half.total)
@@ -41,7 +41,7 @@ begin
                     and p.bestellnr = b.bestellnr
                     and p.getraenkename = g.getraenkename
                     and p.hersteller = g.hersteller
-                    and g.kategorie LIKE p_kategorie
+                    and g.kategorie LIKE coalesce(p_kategorie,'%')
                     and b.bestelldatum between start_date and end_date
                   group by p.bestellnr
                   order by total
@@ -56,4 +56,5 @@ begin
     select * from temp_res;
 
 
-end;
+end$$
+DELIMITER ;

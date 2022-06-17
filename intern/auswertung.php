@@ -78,8 +78,8 @@ if (isset($_POST["startdatum"]) && isset($_POST["kategorie"])) {
         <td><b>größte Bestellung der Woche (in EUR)</b></td>
     </tr>";
     $groesste = $auswertung->getGroesste();
-    foreach ($groesste as  $row){
-        echo "<tr><td>". date("W (Y)",strtotime($row["start_date"])) . "</td><td>" . $row["total"] . "</td></tr>";
+    foreach ($groesste as $row){
+        echo "<tr><td>". date("W (Y)",strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
     }
     echo "</table><br><hr>";
 
@@ -89,15 +89,25 @@ if (isset($_POST["startdatum"]) && isset($_POST["kategorie"])) {
         <td><b>Median der Bestellungen der Woche (in EUR)</b></td>
     </tr>";
     $median = $auswertung->getMedian();
-    foreach ($median as  $row){
-        echo "<tr><td>". date("W (Y)",strtotime($row["start_date"])) . "</td><td>" . $row["total"] . "</td></tr>";
+    foreach ($median as $row){
+        echo "<tr><td>". date("W (Y)",strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
     }
     echo "</table><br><hr>";
 
     $standardabweichung = $auswertung->getStandardabweichung();
 
+    echo"<table>
+    <tr>
+        <td><b>KW (Jahr)</b></td>
+        <td><b>Standardabweichung der Bestellungen der Woche (in EUR)</b></td>
+    </tr>";
+    foreach ($standardabweichung as $row){
+        echo "<tr><td>". date("W (Y)",strtotime($row['start_date'])) . "</td><td>" . $row['total'] . "</td></tr>";
+    }
+    echo "</table><br><hr>";
+
     echo "---------";
-    var_dump($standardabweichung);
+    //var_dump($standardabweichung);
 
 /*
 
