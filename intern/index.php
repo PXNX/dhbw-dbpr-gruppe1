@@ -7,6 +7,10 @@ include "../common/auth.inc.php";
     <meta charset="UTF-8">
     <meta name="author" content="Felix Huber">
     <title>Anmeldung Mitarbeiter</title>
+    <!--
+    Allgemeine Erläuterung:
+    Auf dieser Seite finden sich Links zu den für Mitarbeiter zugänglichen Informationen. Ist man nicht eingeloggt, so wird man automatisch zum Login weitergeleitet.
+    -->
 </head>
 <body>
 

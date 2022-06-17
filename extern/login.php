@@ -56,15 +56,14 @@ function kundelogin(string $input_mail, string $input_pass)
         //Korrekt -> Weiterleitung Bestellabschluss
         //Inkorrekt -> Meldung
         if (password_verify($input_pass, $correct_pass)) {
-            $_SESSION["mailadresse"] = $input_mail;
+            $_SESSION['mailadresse'] = $input_mail;
             header('Location: bestellung/abschluss.php', true, 301);
             exit();
         } else {
-        echoswort ist inkorrekt.</h1>");
+        echo "Kennwort ist inkorrekt.</h1>");
         }
     } catch (Exception $e) {
-        $loginfehler[] = 'Es ist ein Fehler beim Login aufgetreten.
-        Versuchen Sie es noch einmal oder rufen Sie den Support an.';
+        echo 'Login fehlgeschlagen.';
     }
 
 

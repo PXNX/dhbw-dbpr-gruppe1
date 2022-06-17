@@ -1,5 +1,5 @@
 <?php
-include "../common/auth.inc.php";
+include '../common/auth.inc.php';
 include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
@@ -8,6 +8,12 @@ include '../common/db.inc.php';
     <meta charset="UTF-8">
     <meta name="author" content="Felix Huber">
     <title>Auswertungen der Bestellungen</title>
+    <!--
+    Allgemeine Erläuterung:
+    Auf dieser Seite findet der Mitarbeiter die Auswertungen zu seinem Markt, einschränkbar durch Startdatum und
+    Kategorie. Es werden wochenweise Tabelle mit Gesamtumsatz, Umsatz der größten Bestellung, Median,
+    Standardabweichung und lineare Regression gezeigt.
+-->
 </head>
 <body>
 <h1 style="text-align:center">Auswertungen der Bestellungen</h1>

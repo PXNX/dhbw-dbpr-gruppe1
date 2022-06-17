@@ -22,9 +22,6 @@ include '../../common/db.inc.php';
 
 <h1 style="text-align:center">Bestellung erfassen</h1>
 
-<?php
-
-?>
 <!-- Zur Formatierung des Formulars wurde eine Tabellenform gewählt. Positionsnummer, Getränk und Anzahl sollen die Spaltennamen darstellen. -->
 <form action="pruefung.php" method="post">
     <table>
@@ -49,7 +46,7 @@ include '../../common/db.inc.php';
             $positionsnr = $_SESSION['positionsnr'];
 
             //Datenbankabfrage soll positiven Lagerbestand bei den Getränken der Märkte sicherstellen
-            //<code>marktid</code> wird dabei als variable in der Abfrage gewählt
+            //<code>marktid</code> wird dabei als variable in der Abfrage gewählt.
             //In der Ausführung nimmt die variable <code>marktid</code> den Sessionwert des jeweiligen Marktes
             //Direkte Abfrage nach den Getränken eines spezifischen Marktes mit positivem Lagerbestand
             $query = $db->prepare("SELECT * FROM getraenk g, fuehrt f WHERE g.getraenkename=f.getraenkename and g.hersteller=f.hersteller and f.marktid = :marktid and f.lagerbestand>0");
@@ -57,8 +54,7 @@ include '../../common/db.inc.php';
                 'marktid' => $marktid]);
             $getraenk = $query->fetchAll();
             }catch(Exception $e){
-                echo 'Es ist ein Fehler bei der Bestellerfassung aufgetreten.
-                Versuchen Sie es noch einmal oder rufen Sie den Support an.';
+                echo 'Erfasung der Bestellung war fehlerhaft.';
             }
 
             //Mit der for-Schleife werden die Felder für das Getränk und die Mengenangabe erzeugt
@@ -85,7 +81,7 @@ include '../../common/db.inc.php';
     </table>
 
     <!-- Über <code>method="post"</code> werden die Daten an die Lagerbestandsprüfung weitergeleitet um
-    zu prüfen ob die ausgewählte Bestellmenge mit dem Lagerbestand vereinbar ist --->
+    zu prüfen, ob die ausgewählte Bestellmenge mit dem Lagerbestand vereinbar ist. --->
     <button type="submit" name="pruefen">Lagerbestand prüfen</button>
 </form>
 </body>

@@ -19,8 +19,13 @@ include '../common/db.inc.php';
         <select id="getraenk" name="getraenk">
 
             <?php
-            $query = $db->query("SELECT * from getraenk");
+            try{
+                $query = $db->query("SELECT * from getraenk");
             $getraenk = $query->fetchAll();
+            } catch (Exception $e) {
+                echo 'Es ist ein Fehler aufgetreten! Es können keine Getränke abgerufen werden.';
+            }
+            
 
             foreach ($getraenk as $row) {
                 $hersteller = $row["hersteller"];
@@ -55,14 +60,22 @@ if (isset($_POST['getraenk']) && isset($_POST['lagerbestand'])) {
 function saveLagerbestand(string $getraenkename, string $hersteller, int $lagerbestand)
 {
     include "../common/db.inc.php";
-    $query = $db->prepare("insert into fuehrt(getraenkename,hersteller,lagerbestand,marktid) values(:getraenkename, :hersteller, :lagerbestand, :marktid) on duplicate key update lagerbestand = :lagerbestand");
-    $result = $query->execute([
-        'getraenkename' => $getraenkename,
-        'hersteller' => $hersteller,
-        'lagerbestand' => $lagerbestand,
-        'marktid' => $_SESSION['marktid']]);
+    try {
+        $query = $db->prepare("insert into fuehrt(getraenkename,hersteller,lagerbestand,marktid) values(:getraenkename, :hersteller, :lagerbestand, :marktid) on duplicate key update lagerbestand = :lagerbestand");
+        $result = $query->execute([
+            'getraenkename' => $getraenkename,
+            'hersteller' => $hersteller,
+            'lagerbestand' => $lagerbestand,
+            'marktid' => $_SESSION['marktid']]);
+    } catch (Exception $e) {
+       echo 'Es ist ein Fehler aufgetreten! Der Lagerbestand kann nicht erfasst werden.';
+    }
+     
+   
     if ($result) {
         echo 'Lagerbestand wurde erfolgreich gespeichert!';
+    } else {
+        echo 'Lagerbestand wurde nicht gespeichert!'
     }
 }
 

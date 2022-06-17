@@ -1,5 +1,5 @@
 <?php
-include "../common/auth.inc.php";
+include '../common/auth.inc.php';
 include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
@@ -53,24 +53,30 @@ include '../common/db.inc.php';
             <br>
             <input type="submit" value="erfassen"/>
 
-            // Überprüfung ob alle Werte eingetragen sind
         </form>
         <?php
 
+        // Überprüfung, ob alle Werte eingetragen sind, dann Einfügen des Getränks in die DB
         if (isset($_POST['getraenk']) && ($_POST['preis']) && ($_POST['hersteller']) && ($_POST['kategorie'])) {
             $getraenkename = $_POST['getraenkename'];
             $preis = $_POST['preis'];
             $hersteller = $_POST['hersteller'];
             $kategorie = $_POST['kategorie'];
-            // Einfügen des Getränks in die DB        $kategorie = $_POST['kategorie'];
 
 
-            $query = $db->prepare("INSERT into getraenk (getraenkename,hersteller,preis,kategorie) values(:getraenkename,:hersteller,:preis,:kategorie);");
-            $query->execute(["getraenkename" => $getraenkename,
-                "hersteller" => $hersteller,
-                "preis" => $preis,
-                "kategorie" => $kategorie]);
-            $test = $query->fetchAll();
+            try {
+                $query = $db->prepare("INSERT into getraenk (getraenkename,hersteller,preis,kategorie) values(:getraenkename,:hersteller,:preis,:kategorie);");
+         $result =   $query->execute(['getraenkename' => $getraenkename,
+               'hersteller' => $hersteller,
+                               'preis' => $preis,
+               'kategorie' => $kategorie]);
+            if($result){
+               echo 'Das Getränk wurde erfolgreich angelegt.';
+            }
+            } catch (Exception $e) {
+                echo 'Es ist ein Fehler aufgetreten! Bitte die Werte überprüfen und erneut versuchen.';
+            }
+            
         }
         ?>
     </table>

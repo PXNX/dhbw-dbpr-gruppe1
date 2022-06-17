@@ -8,6 +8,11 @@ include '../common/db.inc.php';
     <meta charset="UTF-8">
     <meta name="author" content="Felix Huber">
     <title>Anmeldung Mitarbeiter</title>
+    <!--
+    Allgemeine Erläuterung:
+    Auf dieser Seite finden können sich Mitarbeiter mit einem bereits existierenden Account anmelden. Die
+    Passworteingabe wird mit dem Hash aus der Datenbank verglichen.
+-->
 </head>
 <body>
 <h1 style="text-align:center">Anmeldung Mitarbeiter</h1>
@@ -37,7 +42,7 @@ if (isset($_POST['marktid']) && isset($_POST['marktkennwort'])) {
  * Nutzer anhand der Zugangsdaten einloggen.
  * @author Felix Huber
  */
-function login(string $marktid, string $marktkennwort)
+function login($marktid, $marktkennwort)
 {
     include '../common/db.inc.php';
     $query = $db->prepare("SELECT marktkennwort from markt where marktid=:marktid");
@@ -48,14 +53,14 @@ function login(string $marktid, string $marktkennwort)
         $_SESSION["marktid"] = $marktid;
 
         /*
-        Hier könnte man auch direkt auf die zuvor angeforderte Url weiterleiten, dies ist aber keine AF.
-        Deshalb nur auf die Startseite für interne Mitarbeiter.
+        Hier könnte man auch direkt auf die zuvor angeforderte Url weiterleiten, dies ist aber keine AF. Deshalb nur
+        auf die Startseite für interne Mitarbeiter.
         */
         header('Location: index.php', true, 301);
         exit();
 
     } else {
-        echo("<h1>Passwort ist inkorrekt.</h1>");
+        echo '<h1>Passwort ist inkorrekt.</h1>';
     }
 
 }

@@ -35,40 +35,48 @@ if (isset($_POST['marktid']) && isset($_POST['marktname']) && isset($_POST['mark
     $marktkennwort = password_hash($_POST['marktkennwort'], PASSWORD_DEFAULT);
 
     if (marktid_exists($marktid)) {
-        echo("<h1>Ein Markt mit ID " . $marktid . " existiert bereits. Bitte wählen Sie eine andere ID.");
+        echo("<h1>Ein Markt mit ID $marktid existiert bereits. Bitte wählen Sie eine andere ID.");
         return;
     }
 
     if (marktname_exists($marktname)) {
-        echo("<h1>Ein Markt mit Name " . $marktname . " existiert bereits. Bitte wählen Sie einen anderen Namen.");
+        echo("<h1>Ein Markt mit Name $marktname existiert bereits. Bitte wählen Sie einen anderen Namen.");
         return;
     }
 
-    $query = $db->prepare("INSERT into markt (marktid,marktname,marktkennwort) values(:marktid, :marktname, :marktkennwort)");
-    $query->execute([
-        ':marktid' => $marktid,
-        ':marktname' => $marktname,
-        ':marktkennwort' => $marktkennwort]);
+    try {
+        $query = $db->prepare("INSERT into markt (marktid,marktname,marktkennwort) values(:marktid, :marktname, :marktkennwort)");
+        $result = $query->execute([
+            'marktid' => $marktid,
+            'marktname' => $marktname,
+            'marktkennwort' => $marktkennwort]);
 
-    $_SESSION["marktid"] = $marktid;
+        if ($result) {
+            $_SESSION['marktid'] = $marktid;
 
-    header('Location: index.php', true, 301);
-    exit();
+            header('Location: index.php', true, 301);
+            exit();
+        }
+    }catch (Exception $e){
+        echo 'Registrierung war fehlerhaft.';
+    }
 
+    echo 'Registrierung konnte nicht durchgeführt werden.';
 } else {
 
-//Damit bei erstmaligem Seitenaufruf keine Warnung wegen inkorrekter Passworteingabe kommt. Ist keine AF.
+//Damit bei erstmaligem Seitenaufruf keine Warnung wegen inkorrekter Passworteingabe kommt. Ist keine AF, sondern eher
+//ein Experiment.
     if (empty($_SERVER['HTTP_REFERER']) ||
         preg_match('$' . (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . $_SERVER['REQUEST_URI'] . '$',
             $_SERVER['HTTP_REFERER'])
     ) {
-        echo("<h1>Für die Registrierung Ihres Marktes werden eine von Ihnen gewählte, nicht bereits existierende Markt-Id, sowie einer frei wählbarer Marktname und Passwort benötigt.</h1>");
+        echo('<h1>Für die Registrierung Ihres Marktes werden eine von Ihnen gewählte, nicht bereits existierende Markt-Id, sowie einer frei wählbarer Marktname und Passwort benötigt.</h1>');
     }
 }
 
 
 /**
- * Prüft, ob Markt mit gegebenem Namen bereits existent.
+ * Prüft, ob Markt mit gegebenem Namen bereits existiert.
  * @author Felix Huber
  */
 function marktname_exists($marktname): bool
@@ -82,12 +90,12 @@ function marktname_exists($marktname): bool
 }
 
 /**
- * Prüft, ob Markt mit gegebener Id bereits existent.
+ * Prüft, ob Markt mit gegebener Id bereits existiert.
  * @author Felix Huber
  */
 function marktid_exists($marktid): bool
 {
-    include "../common/db.inc.php";
+    include '../common/db.inc.php';
     $query = $db->prepare("Select * from markt m where m.marktid=:marktid");
     $query->execute(['marktid' => $marktid]);
     $result = $query->fetchAll();

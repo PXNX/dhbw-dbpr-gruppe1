@@ -63,9 +63,7 @@ function check_amounts($getraenk, array $sumgetraenk): bool
             $anzahl = $sumgetraenk[$hersteller][$name];
             if ($lagerbestand < $anzahl) {
                 $is_correct = false;
-                echo '<p>Das Getränk ' . $name . ' von Hersteller ' . $hersteller . ' 
-        ist nur begrenzt auf Lager! Der Lagerbestand beträgt ' . $lagerbestand . '. 
-        Ihre Bestellmenge von ' . $anzahl . ' ist zu hoch.</p>';
+                echo "<p>Das Getränk $name von Hersteller $hersteller ist nur begrenzt auf Lager! Der Lagerbestand beträgt $lagerbestand. Ihre Bestellmenge von $anzahl ist zu hoch.</p>";
             }
         }
     }
@@ -78,16 +76,16 @@ if (isset($_SESSION['extern-marktid']) && isset($_SESSION['positionsnr'])) {
 
     $query = $db->prepare("SELECT g.hersteller, g.getraenkename, f.lagerbestand FROM getraenk g, fuehrt f WHERE g.getraenkename=f.getraenkename and g.hersteller=f.hersteller and f.marktid= :marktid and f.lagerbestand>0");
     $query->execute([
-            'marktid' => $marktid]);
+        'marktid' => $marktid]);
     $getraenk = $query->fetchAll();
 
 
 //Anzahl der Getränke aufsummieren, falls jemand zweimal dasselbe Getränk gewählt hat an mehreren Bestellpositionen
     $sumgetraenk = sum_amounts($position, $getraenk);
 
-//Prüfung ob gewünschte Anzahlen in Lager verfügbar sind
+//Prüfung, ob gewünschte Anzahlen in Lager verfügbar sind
     if (check_amounts($getraenk, $sumgetraenk)) {
-        $_SESSION["order"] = $sumgetraenk;
+        $_SESSION['order'] = $sumgetraenk;
         header("Location: ../login.php", true, 301);
         exit();
     } else {
