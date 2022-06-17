@@ -3,7 +3,7 @@ session_start();
 include '../../common/db.inc.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Patricia Schäle">
@@ -60,7 +60,7 @@ function check_amounts($getraenk, array $sumgetraenk): bool
 
         if (isset($sumgetraenk[$hersteller]) && isset($sumgetraenk[$hersteller][$name])) {
 
-            $anzahl = $sumgetraenk[$hersteller][$name]; //?? 0
+            $anzahl = $sumgetraenk[$hersteller][$name];
             if ($lagerbestand < $anzahl) {
                 $is_correct = false;
                 echo '<p>Das Getränk ' . $name . ' von Hersteller ' . $hersteller . ' 
@@ -76,18 +76,16 @@ if (isset($_SESSION['extern-marktid']) && isset($_SESSION['positionsnr'])) {
     $marktid = $_SESSION['extern-marktid'];
     $position = $_SESSION['positionsnr'];
 
-//Statt * -> Auch g.getraenkename, g.hersteller und f.lagerbestand
     $query = $db->prepare("SELECT g.hersteller, g.getraenkename, f.lagerbestand FROM getraenk g, fuehrt f WHERE g.getraenkename=f.getraenkename and g.hersteller=f.hersteller and f.marktid= :marktid and f.lagerbestand>0");
     $query->execute([
         ':marktid' => $marktid]);
     $getraenk = $query->fetchAll();
 
 
-//Wir summieren die Anzahl auf, falls jemand zweimal dasselbe Getränk gewählt hat an mehreren Bestellpositionen
+//Anzahl der Getränke aufsummieren, falls jemand zweimal dasselbe Getränk gewählt hat an mehreren Bestellpositionen
     $sumgetraenk = sum_amounts($position, $getraenk);
 
-//Passen die Anzahlen zum Lagerbestand?
-
+//Prüfung ob gewünschte Anzahlen in Lager verfügbar sind
     if (check_amounts($getraenk, $sumgetraenk)) {
         $_SESSION["order"] = $sumgetraenk;
         header("Location: ../login.php", true, 301);

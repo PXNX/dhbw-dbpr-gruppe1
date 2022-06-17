@@ -3,7 +3,7 @@ include "../common/auth.inc.php";
 include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Marcel Bitschi">
@@ -11,7 +11,7 @@ include '../common/db.inc.php';
 </head>
 <body>
 
-<h1 style="text-align:center"><p>Lagerbestand erfassen</p></h1>
+<h1 style="text-align:center">Lagerbestand erfassen</h1>
 
 <form method="post" action="lagerbestand.php">
     <table>

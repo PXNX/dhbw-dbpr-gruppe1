@@ -2,7 +2,7 @@
 session_start();
 include '../common/db.inc.php';
 ?>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Patricia Schäle">
@@ -10,49 +10,34 @@ include '../common/db.inc.php';
 </head>
 <body>
 
-<h1 style="text-align:center"><p>Registrieren</p></h1>
+<h1 style="text-align:center">Registrieren</h1>
 
 <form method="post" action="signup.php">
-
-
     <label for="mailadresse">E-Mail Adresse:</label>
     <input type="text" id="mailadresse" name="mailadresse" required>
-    </br>
-
-    <br>
+    <br><br>
     <label for="kundenkennwort">Passwort:</label>
     <input id="kundenkennwort" name="kundenkennwort" type="password" required>
-    </br>
-
-    <br>
+    <br><br>
     <label for="kundenname">Name:</label>
     <input id="kundenname" name="kundenname" required>
-    </br>
-
-    <br>
+    <br><br>
     <label for="strassenname">Straßenname:</label>
     <input id="strassenname" name="strassenname" required>
-    </br>
-
-    <br>
+    <br><br>
     <label for="hausnummer">Hausnummer:</label>
     <input type="number" min="0" id="hausnummer" name="hausnummer" size="6" required>
-    </br>
-
-    <br>
+    <br><br>
     <label for="plz">PLZ:</label>
     <input type="number" min="0" id="plz" name="plz" size="6" required>
-    </br>
-
-    <br>
+    <br><br>
     <label for="ort">Ort:</label>
     <input id="ort" name="ort" required>
-    </br>
-
-
+    <br>
     <input id="kunde-signup" type="submit" value="Registrieren">
 </form>
-</br></br><a href="login.php">Anmelden</a>
+<br><br>
+<a href="login.php">Anmelden</a>
 
 <?php
 

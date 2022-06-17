@@ -3,7 +3,7 @@ include "../common/auth.inc.php";
 include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Marcel Bitschi">
@@ -21,7 +21,7 @@ include '../common/db.inc.php';
 
         <!-- Eingabefeld Getränkename-->
         <tr>
-            <td><label for="getränk"><b>Getränk:</b></label></td>
+            <td><label for="getraenk"><b>Getränk:</b></label></td>
             <td><input id="getraenk" name="getränk" size="40" maxlength="60" value="" required/><br></td>
         </tr>
 
@@ -30,25 +30,27 @@ include '../common/db.inc.php';
             <td><label for="preis"><b>Preis:</b></label></td>
             <td><input id="preis" name="preis" type="number" min="0" step=".01" size="40" maxlength="5" value=""
                        required/><br></td>
+        </tr>
 
-            <!-- Eingabefeld Getränkehersteller-->   </tr>
+            <!-- Eingabefeld Getränkehersteller-->
         <tr>
             <td><label for="hersteller"><b>Hersteller:</b></label></td>
             <td><input id="hersteller" name="hersteller" size="40" maxlength="40" value=""/><br></td>
         </tr>
-        </t
-        <!-- Enum der Getränkekategorien. Hartkodiert -->able>
+
+        <!-- Enum der Getränkekategorien. Hartkodiert -->
         <br>
         <form>
-            <b>Kategorie:</b>
-            <select name="kategorie">
+            <label for="kategorie"><b>Kategorie:</b></label>
+            <select id="kategorie" name="kategorie">
                 <option value="wasser">Wasser</option>
                 <option value="saft">Saft</option>
                 <option value="limonade">Limonade</option>
                 <option value="wein">Wein</option>
                 <option value="bier">Bier</option>
                 <option value="sonstiges">Sonstiges</option>
-            </select> <br>
+            </select>
+            <br>
             <input type="submit" value="erfassen"/>
 
             // Überprüfung ob alle Werte eingetragen sind
@@ -59,6 +61,7 @@ include '../common/db.inc.php';
             $input_getraenk = $_POST['getränk'];
             $input_preis = $_POST['preis'];
             $input_hersteller = $_POST['hersteller'];
+            $input_kategorie = $_POST['kategorie'];
             // Einfügen des Getränks in die DB        $input_kategorie = $_POST['kategorie'];
 
 
@@ -67,6 +70,6 @@ include '../common/db.inc.php';
             $test = $query->fetchAll();
         }
         ?>
-
+    </table>
 </body>
 </html>

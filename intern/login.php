@@ -3,7 +3,7 @@ session_start();
 include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Felix Huber">
@@ -37,7 +37,6 @@ if (isset($_POST['marktid']) && isset($_POST['marktkennwort'])) {
  * Nutzer anhand der Zugangsdaten einloggen.
  * @author Felix Huber
  */
-
 function login(string $marktid, string $marktkennwort)
 {
     include '../common/db.inc.php';

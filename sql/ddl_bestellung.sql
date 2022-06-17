@@ -1,6 +1,6 @@
 create table bestellung
 (
-    bestellnr    int auto_increment
+    bestellnr    int auto_increment not null
         primary key,
     bestelldatum date        null,
     marktid      int         null,

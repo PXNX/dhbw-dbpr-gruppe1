@@ -4,7 +4,7 @@ session_start();
 include '../../common/db.inc.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Patricia Schäle">

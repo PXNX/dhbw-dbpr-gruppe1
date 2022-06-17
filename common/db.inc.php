@@ -1,5 +1,6 @@
 <?php
 /**
+ * Verbindung zur Datenbank. Die Verbindung kann in anderen Dateien verwendet werden.
  * @author Felix Huber
  */
 try {

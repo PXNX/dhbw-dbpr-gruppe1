@@ -3,7 +3,7 @@ session_start();
 include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Felix Huber">
@@ -25,7 +25,8 @@ include '../common/db.inc.php';
 
     <input id="market-signup" type="submit" value="registrieren">
 </form>
-</br></br><a href="login.php">Mitarbeiter anmelden</a>
+<br><br>
+<a href="login.php">Mitarbeiter anmelden</a>
 <?php
 if (isset($_POST['marktid']) && isset($_POST['marktname']) && isset($_POST['marktkennwort'])) {
 
@@ -56,7 +57,7 @@ if (isset($_POST['marktid']) && isset($_POST['marktname']) && isset($_POST['mark
 
 } else {
 
-//Damit nicht bei erstmaligem Seitenaufruf gleich eine Warnung wegen inkorrekter Passworteingabe kommt
+//Damit bei erstmaligem Seitenaufruf keine Warnung wegen inkorrekter Passworteingabe kommt. Ist keine AF.
     if (empty($_SERVER['HTTP_REFERER']) ||
         preg_match('$' . (isset($_SERVER['HTTPS']) ? 'https' : 'http') . '://' . $_SERVER['HTTP_HOST'] . '/' . $_SERVER['REQUEST_URI'] . '$',
             $_SERVER['HTTP_REFERER'])

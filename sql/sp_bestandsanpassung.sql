@@ -1,25 +1,25 @@
 DELIMITER $$
 CREATE
-    DEFINER = `root`@`localhost` PROCEDURE `bestandsanpassung`(IN `param_market` VARCHAR(50),
-                                                               IN `param_hersteller` VARCHAR(50),
-                                                               IN `param_name` VARCHAR(50), IN `param_bestand` INT)
+    DEFINER = `root`@`localhost` PROCEDURE `bestandsanpassung`(IN `p_market` VARCHAR(50),
+                                                               IN `p_hersteller` VARCHAR(50),
+                                                               IN `p_name` VARCHAR(50), IN `p_bestand` INT)
 BEGIN
     DECLARE anzahl INT DEFAULT 0;
     SELECT COUNT(*)
     INTO anzahl
     FROM fuehrt
-    WHERE hersteller = param_hersteller
-      AND getraenkename = param_name
-      AND marktid = param_market;
+    WHERE hersteller = p_hersteller
+      AND getraenkename = p_name
+      AND marktid = p_market;
     IF (anzahl = 1) THEN
         UPDATE fuehrt
-        SET lagerbestand = param_bestand
-        WHERE hersteller = param_hersteller
-          AND getraenkename = param_name
-          AND marktid = param_market;
+        SET lagerbestand = p_bestand
+        WHERE hersteller = p_hersteller
+          AND getraenkename = p_name
+          AND marktid = p_market;
     ELSE
         INSERT INTO fuehrt (hersteller, getraenkename, lagerbestand, marktid)
-        VALUES (param_hersteller, param_name, param_bestand, param_market);
+        VALUES (p_hersteller, p_name, p_bestand, p_market);
     END IF;
 
 END$$

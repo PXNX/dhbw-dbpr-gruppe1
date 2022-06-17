@@ -3,7 +3,7 @@ session_start();
 include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
     <meta charset="UTF-8">
     <meta name="author" content="Patricia Schäle">
@@ -16,7 +16,7 @@ include '../common/db.inc.php';
 </head>
 <body>
 
-<h1 style="text-align:center"><p>Erfassungsformular erstellen</p></h1>
+<h1 style="text-align:center">Erfassungsformular erstellen</h1>
 
 <!-- Die Inhalte werden per form-Tag an die Erfassungsdatei übertragen (Hier findet dann der Erstellungsprozess des Formulars statt) -->
 <form action="bestellung/erfassung.php" method="post">
@@ -52,7 +52,7 @@ include '../common/db.inc.php';
     <br>
     <!-- Daten werden an bestellung_erfassen.php übertragen --->
     <button type="submit" name="erfassen">Erfassungsformular erstellen</button>
-    </br>
+    <br>
 </form>
 </body>
 </html>

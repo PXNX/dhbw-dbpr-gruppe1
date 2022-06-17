@@ -22,7 +22,6 @@ class Auswertung
         $this->standardabweichungen = 0.0;
         $this->median = 0.0;
 
-        $this->gesamtumsatz_berchnen($marktid, $startdatum, $kategorie);
 
         $this->marktid = $marktid;
         $this->startdatum = $startdatum;
@@ -246,15 +245,17 @@ class Auswertung
         return $kalenderWochen;
     }
 
-    private function gesamtumsatz_berchnen($marktid, $startdatum, $kategorie)
+    private function berechne_gesamtumsatz($startdatum, $kategorie, $marktid)
     {
         include "db.inc.php";
-        $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum); "); // :marktid
-        $result = $query->execute([<
+        $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid); ");
+        $result = $query->execute([
             ':kategorie' => $kategorie,
             ':startdatum' => $startdatum,
+ ":marktid" => $marktid
+            ]);
 
-            ]);  //':marktid' => $_SESSION['marktid']
+        var_dump($result);
     }
 
 
