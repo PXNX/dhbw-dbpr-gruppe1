@@ -17,9 +17,9 @@ zu nutzen oder einen neuen Kundenaccount anzulegen.-->
 <body>
 <h1 style="text-align:center">Anmeldung: Ihre Bestellung ist möglich!</h1>
 <p>Um die Bestellung durchführen zu können, müssen Sie sich <b>einloggen</b>.
-        Wenn Sie noch kein Kundenkonto haben, <b>registrieren</b> Sie sich bitte zuerst.</p>
+    Wenn Sie noch kein Kundenkonto haben, <b>registrieren</b> Sie sich bitte zuerst.</p>
 
-<!-- Formular für E-Mail- und Kennworteingabe -->
+<!-- Formular für <code>mailadresse</code> und <code>kennwort</code> -->
 <form method="post" action="login.php">
 
     <label for="mailadresse">E-Mail Adresse:</label>
@@ -45,25 +45,28 @@ if (isset($_POST['mailadresse']) && isset($_POST['kundenkennwort'])) {
 //Funktion soll prüfen ob Kunde ein Kundenaccount hat
 function kundelogin(string $input_mail, string $input_pass)
 {
-    include '../common/db.inc.php';
-    $query = $db->prepare("SELECT kundenkennwort from kunde where mailadresse= :mailadresse");
-    $query->execute([
-        ':mailadresse' => $input_mail]);
-    $correct_pass = $query->fetchAll(PDO::FETCH_COLUMN)[0];
+    try {
+        include '../common/db.inc.php';
+        $query = $db->prepare("SELECT kundenkennwort from kunde where mailadresse= :mailadresse");
+        $query->execute([
+            'mailadresse' => $input_mail]);
+        $correct_pass = $query->fetchAll(PDO::FETCH_COLUMN)[0];
 
-    //Passwortprüfung
-    //Korrekt -> Weiterleitung Bestellabschluss
-    //Inkorrekt -> Meldung
-    if (password_verify($input_pass, $correct_pass)) {
-        $_SESSION["mailadresse"] = $input_mail;
-        header('Location: bestellung/abschluss.php', true, 301);
-        exit();
-
-    } else {
-        echo("<h1>Passwort ist inkorrekt.</h1>");
-
-
+        //Passwortprüfung
+        //Korrekt -> Weiterleitung Bestellabschluss
+        //Inkorrekt -> Meldung
+        if (password_verify($input_pass, $correct_pass)) {
+            $_SESSION["mailadresse"] = $input_mail;
+            header('Location: bestellung/abschluss.php', true, 301);
+            exit();
+        } else {
+        echoswort ist inkorrekt.</h1>");
+        }
+    } catch (Exception $e) {
+        $loginfehler[] = 'Es ist ein Fehler beim Login aufgetreten.
+        Versuchen Sie es noch einmal oder rufen Sie den Support an.';
     }
+
 
 }
 

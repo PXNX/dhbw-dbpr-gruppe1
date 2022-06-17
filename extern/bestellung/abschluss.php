@@ -24,27 +24,30 @@ include '../../common/db.inc.php';
     -->
 
     <?php
-    if (isset($_SESSION['order']) && isset($_SESSION['extern-marktid']) && isset($_SESSION['mailadresse'])) {
+    if (isset($_SESSION['order']) && isset($_SESSION['extern-marktid']) && isset($_SESSION['mailadresse']))
 
-
-        //Bestellung wird angelegt mit aktuellem Datum
+        try{
         $query = $db->prepare("INSERT INTO bestellung(bestelldatum, marktid, mailadresse) VALUES(:bestelldatum, :marktid, :mailadresse);");
         $result = $query->execute([
             ':bestelldatum' => date('Y-m-d'),
             ':marktid' => $_SESSION['extern-marktid'],
             ':mailadresse' => $_SESSION['mailadresse']
         ]);
+            }catch(Exception $e){
+        $bestellungsfehler[] = 'Es ist ein Fehler bei der Bestellung aufgetreten. Versuchen Sie es noch einmal oder rufen
+        sie den Support an.';
+        }
 
 
+
+        echo> ist auto inkrement, zuletzt hinzugefügte <code>bestellnr</code> auslesen
         //Bestellpositionen zur Bestellung werden angelegt
-
-        //Bestellnr ist auto inkrement, zuletzt hinzugefügte Bestellnr auslesen
-        //Bestellpositionen zur Bestellung werden angelegt
-        foreach ($_SESSION['order'] as $hersteller => $getraenke) {
-
+        f
+        oreach ($_SESSION['order'] as $hersteller => $getraenke) {
+        try{
             foreach ($getraenke as $getraenkename => $anzahl) {
-                            $query = $db->prepare("CALL bestellposition_buchen(:bestellnr, :positionsnr, :anzahl, :getraenkename, :hersteller);");
-                $result = $query->execute([
+            try{                $query = $db->prepare("CALL bestellposition_buchen(:bestellnr, :positionsnr, :anzahl, :getraenkename, :hersteller);");
+            $result = $query->execute([
                     ':bestellnr' => $bestellnr,
                     ':positionsnr' => $positionsnr,
                     ':anzahl' => $anzahl,
@@ -53,16 +56,28 @@ include '../../common/db.inc.php';
                 ]);
                 $positionsnr += 1;
             }
+                
+                if($result){
 
+                }else{
+                    echo'Es traten Fehler bei der Anlage Ihrer Bestellpositionen auf.';
+                }
+        }
+        }
+        //Bei erfolgreichen anlegen der Bestellung kommt Erfolgsmeldung und die Möglichkeit eine neue Bestellung anzugelegen
+        echo'<h1>Ihre Bestellung wurde erfolgreich abgeschlossen!</h1>
+    
+        <a href="../index.php">Neue Bestellung</a>';
+            }
+
+        catch(Exception $e){
+            $bestellposition[] = 'Es ist ein Fehler bei der Anlage der Bestellpositionen aufgetreten.
+            echo einmal oder rufen Sie den Support an.';
         }
 
         echo '<h1>Ihre Bestellung wurde erfolgreich abgeschlossen!</h1><a href="../index.php">Neue Bestellung anlegen</a>';
-        //Bei erfolgreichen anlegen der Bestellung kommt Erfolgsmeldung und die Möglichkeit eine neue Bestellung anzugelegen    } else {
+        /Bei erfolgreichen anlegen der Bestellung kommt Erfolgsmeldung und die Möglichkeit eine neue Bestellung anzugelegen    } else {
 
-        echo "Bestellung, MarkId oder Mail wurden nicht gesetzt.";
-    }
-
-    ?>
 
 </head>
 <body>

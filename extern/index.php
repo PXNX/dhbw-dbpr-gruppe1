@@ -10,34 +10,37 @@ include '../common/db.inc.php';
     <title>Erfassungsformular</title>
     <!--
       Allgemeine Erläuterung:
-      Zur Bestellungserfassung muss der Kunde zunächst einen Markt und die Anzahl der Bestellpositionen auswählen.
-      Dafür steht ihm eine Liste aus Marktid-Marktname für die Marktauswahl und ein Input-Feld für die Positionsanzahl zur verfügung.
+      Zur Bestellungserfassung muss der Kunde zunächst einen Markt und die Anzahl der Bestellpositionen auswählen. Dafür steht ihm eine Liste aus
+      <code>marktid-marktname</code> für die Marktauswahl und ein Input-Feld für die Anzahl der <code>positionsnr</code>n in der Bestellung zur Verfügung.
     -->
 </head>
 <body>
 
 <h1 style="text-align:center">Erfassungsformular erstellen</h1>
 
-<!-- Die Inhalte werden per form-Tag an die Erfassungsdatei übertragen (Hier findet dann der Erstellungsprozess des Formulars statt) -->
+<!-- Die Inhalte werden per <code>method="post"</code> an die Erfassungsdatei übertragen (Hier findet dann der Erstellungsprozess des Formulars statt) -->
 <form action="bestellung/erfassung.php" method="post">
 
-    <!-- Auswahlliste für den Markt. Ein Markt besteht hier aus Marktid-Marktname.
-        extern-marktid: extern, weil es sonst mit id von Mitarbeitern korrelliert -->
+    <!-- Auswahlliste für den Markt. Ein Markt besteht hier aus <code>marktid-marktname</code>.
+        <code>extern-marktid</code>: Namensgebung extern, weil es sonst mit id von Mitarbeitern korreliert -->
     <label for="extern-marktid"><b>Markt:</b></label>
     <select id="extern-marktid" name="extern-marktid">
         <?php
-
-        //Datenbankabfrage die alle Märkte ausliest. Ergebnisse werden in dem Array $markt abgelegt
-        //PDOStatement::fetchAll gibt alle Zeilen aus der Ergebnismenge zurück. Der Parameter PDO::FETCH_ASSOC weist PDO an, das Ergebnis als assoziatives Array zurückzugeben. Die Array-Schlüssel entsprechen Ihren Spaltennamen.
+        try{
+        //Datenbankabfrage die alle Märkte ausliest. Ergebnisse werden in dem Array <code>markt</code> abgelegt
         $statement = $db->query("SELECT * FROM markt");
         $statement->execute([]);
         $markt = $statement->fetchAll(PDO::FETCH_ASSOC);
 
-        //Foreach Schleife legt die Marktid jedes in dem Array $markt abgelegt Datensatzes in ein $marktid Array
+        //Foreach Schleife legt die <code>marktid</code> jedes in dem Array <code>markt</code> abgelegten Datensatzes in ein <code>marktid</code> Array
         foreach ($markt as $row) {
             $marktid = $row["marktid"];
             echo '<option value="' . $marktid . '">' . $marktid . ' - ' . $row["marktname"] . '</option>';
         }
+    }catch(Exception $e){
+        echo'Es ist ein Fehler aufgetreten.
+        Versuchen Sie es noch einmal oder rufen Sie den Support an.';
+    }
         ?>
     </select>
 
@@ -48,7 +51,7 @@ include '../common/db.inc.php';
             <td><input type="number" min="1" name="positionsnr" size="40"
                        value='<?php echo $_SESSION['positionsnr']; ?>' required/><br></td>
         </tr>
-    </table>
+    </table><code></code>
     <br>
     <!-- Daten werden an bestellung_erfassen.php übertragen --->
     <button type="submit" name="erfassen">Erfassungsformular erstellen</button>

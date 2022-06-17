@@ -17,15 +17,33 @@ class Auswertung
     /** @author Felix Huber */
     public function __construct($marktid, $startdatum, $kategorie)
     {
-        $this->gesamtumsatz = berechne_gesamtumsatz($marktid, $startdatum, $kategorie);
-        $this->bestellung = 0.0;
-        $this->standardabweichungen = 0.0;
-        $this->median = 0.0;
-
-
         $this->marktid = $marktid;
         $this->startdatum = $startdatum;
         $this->kategorie = $kategorie;
+
+        $this->gesamtumsatz = $this->berechne_gesamtumsatz();
+        $this->groesste = $this->berechne_groesste();
+        $this->standardabweichungen = $this->berechne_standardabweichung(array(),array());
+        $this->median = $this->berechne_median();
+    }
+
+    /**
+     * Stored Procedure zur Berechnung des Gesamtumsatzes je Woche aufrufen.
+     * @author Felix Huber
+     */
+    public function berechne_gesamtumsatz(): array
+    {
+        include "db.inc.php";
+        $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid); ");
+        $query->execute([
+            'kategorie' => $this->kategorie,
+            'startdatum' => $this->startdatum,
+            "marktid" => $this->marktid
+        ]);
+        $result = $query->fetchAll(PDO::FETCH_ASSOC);
+
+        //var_dump($result);
+        return $result;
     }
 
     /** @author Marcel Bitschi */
@@ -36,7 +54,7 @@ class Auswertung
         $wochenUmsaetze = [];
         $stmt = $connection->prepare("SELECT SUM(bp.anzahl * g.preis) as Umsatz 
 			from bestellposition bp, getraenk g, bestellung b 
-			where bp.bestellnummer = b.bestellnr 
+			where bp.bestellnr = b.bestellnr 
 			AND g.hersteller = bp.hersteller 
 			AND g.getraenkename = bp.getraenkename 
 			AND b.marktid = ?
@@ -98,127 +116,30 @@ class Auswertung
     }
 
     /** @author Marcel Bitschi */
-    private function standardabweichungBerechnung($kalenderWochen, $umsaetze)
+    private function berechne_standardabweichung($startdatum, $kategorie)
     {
         $standardabweichungen = [];
-        if (is_array($kalenderWochen) || is_object($kalenderWochen)) {
-            foreach ($kalenderWochen as $key => $value) {
-                $standardabweichung = 0;
-                $umsatzsumme = 0;
-                $umsatzQuadratsumme = 0;
-                if (count($umsaetze[$key])) {
-                    $count = count($umsaetze[$key]);
-                    foreach ($umsaetze[$key] as $umsatz) {
-                        $umsatzsumme += $umsatz;
-                        $umsatzQuadratsumme += $umsatz ** 2;
-                    }
+        foreach ($this->$startdatum as $key => $value) {
+            $standardabweichung = 0;
+            $umsatzsumme = 0;
+            $umsatzQuadratsumme = 0;
+            if (count($kategorie[$key])) {
+                $count = count($kategorie[$key]);
+                foreach ($kategorie[$key] as $umsatz) {
+                    $umsatzsumme += $umsatz;
+                    $umsatzQuadratsumme += $umsatz ** 2;
+                }
 
                     $arithmetischesMittel = $umsatzsumme / $count;
 
-                    $varianz = 1 / $count * $umsatzQuadratsumme - ($arithmetischesMittel ** 2);
-                    $standardabweichung = sqrt($varianz);
-                }
-                $standardabweichungen[$key] = $standardabweichung;
+                $varianz = 1 / $count * $umsatzQuadratsumme - ($arithmetischesMittel ** 2);
+                $standardabweichung = sqrt($varianz);
             }
+            $standardabweichungen[$key] = $standardabweichung;
         }
+        var_dump($standardabweichungen);
         return $standardabweichungen;
     }
-
-    function calculateKennzahlen(string $start_datum, string $kategorie)
-    {
-
-    }
-
-    function getGesamtumsatz(): float
-    {
-        return $this->gesamtumsatz;
-    }
-
-    function getBestellung(): float
-    {
-        return $this->bestellung;
-    }
-
-    function getMedian(): float
-    {
-        return $this->median;
-    }
-
-
-  
-    //Regressionsfunktion
-    //Eingabe soll für aktuelle und folgende Woche Umsatz vorhersagen
-    function regression($x)
-    {
-        $aktuellesDatum=$x;
-        $kw = date("W", $aktuellesDatum);
-        $kw2 = $kw -> addWeek(1);
-
-        //Daten x Werte (Zeitwerte)
-        foreach($kalenderWochen as $key => $woche){
-            $xWerte[] = $woche[$key];
-        }
-
-        //Daten y Werte  
-        foreach($wochenUmsaetze as $u){
-            $yWerte[] = $u;
-        }
-
-        //Mittelwert x und y Werte
-        $xMittelwert = arithmetischesMittel($xWerte[]);
-        $yMittelwert = arithmetischesMittel($yWerte[]);
-
-        //Abweichung von x und y vom Mittelwert 
-        $xAbweichung[] = $xWerte[] - $xMittelwert;
-        $yAbweichung[] = $yWerte[] - $yMittelwert;
-
-        //Quadrierte Abweichung von x
-        $xQuadriert[] = pow($xAbweichung, 2);
-
-        //Abweichung x * Abweichung y -> (xi - ∅x) × (yi - ∅y)
-        $xyAbweichung[] = $xAbweichung[] * $yAbweichung[];
-
-        //Steigung berechnen -> Nun wird die Summe der multiplizierten Abweichungen 
-        //durch die Summe der quadrierten Abweichungen von x geteilt -> β = ∑ [(xi - ∅x) × (yi - ∅y)] / ∑(xi - ∅x)2
-
-        foreach($xQuadriert as $quad){
-            $sumQuadriert += $quad;
-        } 
-
-        foreach($xyAbweichung as $xyab){
-            $sumAbweichung += $xyab;
-        }
-
-        $steigung = $sumQuadriert / $sumAbweichung;
-
-        //Achsenabschnitt berechnen -> α = ∅y - β × ∅x
-        $achsenabschnitt = $yMittelwert - $yMittelwert*$xMittelwert;
-        
-
-        //Regressionsgerade -> yi = α + β × xi
-        $umsatz = $achsenabschnitt + ($x * $steigung);
-
-        //Regression Folgewoche
-        $umsatz2 = $achsenabschnitt + ($x * $steigung);
-
-        return echo' '$umsatz' '$umsatz2'';
-        
-    }
-
-
-    /** @author Patricia Schäle */
-    function arithmetischesMittel($werte){
-        if (count($werte)) {
-            $count = count($werte);
-            foreach ($werte as $w) {
-                $summe += $w;
-            }
-        return $arithmetischesMittel = $summe / $count;
-    }
-    }
-
-
-
 
     /** @author Marcel Bitschi */
     private function setKalenderWochen($startdatum)
@@ -245,18 +166,102 @@ class Auswertung
         return $kalenderWochen;
     }
 
-    private function berechne_gesamtumsatz($startdatum, $kategorie, $marktid)
+    function calculateKennzahlen(string $start_datum, string $kategorie)
     {
-        include "db.inc.php";
-        $query = $db->prepare("call sp_gesamt(:kategorie, :startdatum, :marktid); ");
-        $result = $query->execute([
-            ':kategorie' => $kategorie,
-            ':startdatum' => $startdatum,
- ":marktid" => $marktid
-            ]);
 
-        var_dump($result);
     }
 
+    /**
+     * Getter für das Ergebnis der Berechnung des Gesamtumsatzes.
+     * @author Felix Huber
+     */
+    function getGesamtumsatz(): array
+    {
+        return $this->gesamtumsatz;
+    }
+
+    function getBestellung(): float
+    {
+        return $this->bestellung;
+    }
+
+    function getMedian(): float
+    {
+        return $this->median;
+    }
+
+
+    /*
+      //Regressionsfunktion
+      //Eingabe soll für aktuelle und folgende Woche Umsatz vorhersagen
+      function regression($x)
+      {
+          $aktuellesDatum=$x;
+          $kw = date("W", $aktuellesDatum);
+          $kw2 = $kw -> addWeek(1);
+
+          //Daten x Werte (Zeitwerte)
+          foreach($kalenderWochen as $key => $woche){
+              $xWerte[] = $woche[$key];
+          }
+
+          //Daten y Werte
+          foreach($wochenUmsaetze as $u){
+              $yWerte[] = $u;
+          }
+
+          //Mittelwert x und y Werte
+          $xMittelwert = arithmetischesMittel($xWerte[]);
+          $yMittelwert = arithmetischesMittel($yWerte[]);
+
+          //Abweichung von x und y vom Mittelwert
+          $xAbweichung[] = $xWerte[] - $xMittelwert;
+          $yAbweichung[] = $yWerte[] - $yMittelwert;
+
+          //Quadrierte Abweichung von x
+          $xQuadriert[] = pow($xAbweichung, 2);
+
+          //Abweichung x * Abweichung y -> (xi - ∅x) × (yi - ∅y)
+          $xyAbweichung[] = $xAbweichung[] * $yAbweichung[];
+
+          //Steigung berechnen -> Nun wird die Summe der multiplizierten Abweichungen
+          //durch die Summe der quadrierten Abweichungen von x geteilt -> β = ∑ [(xi - ∅x) × (yi - ∅y)] / ∑(xi - ∅x)2
+
+          foreach($xQuadriert as $quad){
+              $sumQuadriert += $quad;
+          }
+
+          foreach($xyAbweichung as $xyab){
+              $sumAbweichung += $xyab;
+          }
+
+          $steigung = $sumQuadriert / $sumAbweichung;
+
+          //Achsenabschnitt berechnen -> α = ∅y - β × ∅x
+          $achsenabschnitt = $yMittelwert - $yMittelwert*$xMittelwert;
+
+
+          //Regressionsgerade -> yi = α + β × xi
+          $umsatz = $achsenabschnitt + ($x * $steigung);
+
+          //Regression Folgewoche
+          $umsatz2 = $achsenabschnitt + ($x * $steigung);
+
+          return  echo' '$umsatz' '$umsatz2'';
+
+      }
+  */
+
+
+    /** @author Patricia Schäle */
+    function arithmetischesMittel($werte){
+        if (count($werte)) {
+            $count = count($werte);
+            foreach ($werte as $w) {
+                $summe += $w;
+            }
+        return $arithmetischesMittel = $summe / $count;
+    }
+    }
 
 }

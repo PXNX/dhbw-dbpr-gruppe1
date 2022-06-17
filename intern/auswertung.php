@@ -1,5 +1,5 @@
 <?php
-session_start();
+include "../common/auth.inc.php";
 include '../common/db.inc.php';
 ?>
 <!DOCTYPE html>
